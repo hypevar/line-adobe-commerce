@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2023 Line. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="payment" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="linepayment" translate="label" type="text" sortOrder="100"
+                showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Line Payment</label>
+                <field id="active" translate="label" type="select" sortOrder="1"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Status</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                </field>
+
+                <field id="title" translate="label value" type="text" sortOrder="10"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Title</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="module_mode" translate="label" type="select" sortOrder="20"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Mode</label>
+                    <source_model>Line\Payment\Model\Config\Source\Modes</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="sandbox_api_key" translate="label" type="obscure" sortOrder="22"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sandbox Api Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/module_mode">sandbox</field>
+                    </depends>
+                </field>
+                <field id="sandbox_url" translate="label" type="text" sortOrder="23"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sandbox URL</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/module_mode">sandbox</field>
+                    </depends>
+                </field>
+
+                <field id="production_api_key" translate="label" type="obscure" sortOrder="22"
+                    showInDefault="1" showInWebsite="1">
+                    <label>Production Api Key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/module_mode">production</field>
+                    </depends>
+                </field>
+
+                <field id="production_url" translate="label" type="text" sortOrder="23"
+                    showInDefault="1" showInWebsite="1">
+                    <label>Production URL</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/module_mode">production</field>
+                    </depends>
+                </field>
+
+                <field id="debug_enabled" translate="label" type="select" sortOrder="30"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Developer Debug</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>When enabled, a custom log will be created with relevant information for debugging. Please check: /var/log/line-payment.log</comment>
+                </field>
+
+                <field id="credit_card_types" translate="label" type="multiselect" sortOrder="40"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Available Credit Cards</label>
+                    <source_model>Line\Payment\Model\Config\Source\CreditCardTypes</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="document_types" translate="label" type="multiselect" sortOrder="50"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Document Types</label>
+                    <source_model>Line\Payment\Model\Config\Source\DocumentTypes</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="display_installments_price" translate="label" type="select" sortOrder="55"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Display Installments Price</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Display, within the Installments dropdown, the installment price amount of each promotion</comment>
+                </field>
+
+                <field id="order_status" translate="label" type="select" sortOrder="60"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Status in which the Order will be set, once the payment is processed.</comment>
+                </field>
+
+                <field id="terminal_system" translate="label" type="text" sortOrder="80"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Terminal System</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Terminal Operation identifier.</comment>
+                </field>
+
+                <field id="promotions_marketplace" translate="label" type="text" sortOrder="90"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Promotions Marketplace</label>
+                    <source_model>Line\Payment\Model\Config\Source\Promotions\Marketplace</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Marketplace ID of your Promotion's dashboard</comment>
+                </field>
+
+                <field id="promotions_account" translate="label" type="text" sortOrder="91"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Promotions Marketplace Id</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Account Number for the Promotions endpoint</comment>
+                </field>
+
+                <field id="promotions_sandbox_url" translate="label comment" type="text" sortOrder="92"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Promotions Sandbox Url</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/module_mode">sandbox</field>
+                    </depends>
+                    <comment>Promotion's Sandbox Url (inherits from the general Mode)</comment>
+                </field>
+
+                <field id="promotions_production_url" translate="label comment" type="text" sortOrder="92"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Promotions Production Url</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/module_mode">production</field>
+                    </depends>
+                    <comment>Promotion's Production Url (inherits from the general Mode)</comment>
+                </field>
+
+                <field id="installments_filter_enabled" translate="label comment" type="select" sortOrder="100"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Installments Filter Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Whether to filter or not, by a minimum Order Grand total amount, the list of installments that comes from the Gateway.</comment>
+                </field>
+
+                <field id="installments_filter_configuration" translate="label comment" type="text" sortOrder="101"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Installments Filter Configuration</label>
+                    <frontend_model>Line\Payment\Block\Adminhtml\Config\FilterConfiguration\Field\Row</frontend_model>
+                    <backend_model>Magento\Config\Model\Config\Backend\Serialized\ArraySerialized</backend_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/installments_filter_enabled">1</field>
+                    </depends>
+                    <comment>First column contains the minimum Order amount for the installments list to be available. Installments is a list of coma-separated values. Whatever the Gateway returns, only the list of Installments specified will be displayed.</comment>
+                </field>
+
+                <field id="api_version" translate="label" type="select" sortOrder="110"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Api Version</label>
+                    <source_model>Line\Payment\Model\Config\Source\ApiVersion</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+
+                <field id="api_ssl_is_active" translate="label" type="select" sortOrder="120"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Api SSL Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Enable SSL communication with Gateway Api</comment>
+                </field>
+
+                <field id="api_ssl_version" translate="label" type="select" sortOrder="130"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Api SSL Version</label>
+                    <source_model>Line\Payment\Model\Config\Source\SSLVersions</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>TLS 1.2 by default. Do not modify unless you know what you're doing.</comment>
+                </field>
+
+                <field id="sort_order" translate="label" type="text" sortOrder="140"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

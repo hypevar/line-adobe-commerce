@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2023 Line. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Class for accessing module's configuration values -->
+    <preference for="Line\Payment\Api\Data\ConfigInterface" type="Line\Payment\Model\Config" />
+    <!-- Used to retrieve current composer.json version value -->
+    <preference for="Line\Payment\Api\Data\GetModuleVersionActionInterface" type="Line\Payment\Model\Config\GetModuleVersionAction" />
+
+    <!-- /// Data Schema /// -->
+    <!-- Responses representation-->
+    <preference for="Line\Payment\Api\ResponseInterface" type="Line\Payment\Gateway\Api\Response" />
+    <preference for="Line\Payment\Api\GatewayResponseInterface" type="Line\Payment\Gateway\Api\Response" />
+    <preference for="Line\Payment\Api\Response\AttributeDetailInterface" type="Line\Payment\Gateway\Api\Response\Detail" />
+    <preference for="Line\Payment\Api\Response\GatewayAttribute\DetailInterface" type="Line\Payment\Gateway\Api\Response\Detail" />
+
+    <!-- /// SDK alike classes /// -->
+    <preference for="Line\Payment\Api\Data\ConnectorInterface" type="Line\Payment\Model\Client\Connector" />
+
+    <!-- Emitters: for regexp cards detection -->
+    <preference for="Line\Payment\Api\GetEmittersActionInterface" type="Line\Payment\Model\GetEmittersAction" />
+
+    <!-- Promotions -->
+    <preference for="Line\Payment\Api\GetPromotionsActionInterface" type="Line\Payment\Model\GetPromotionsAction" />
+    <preference for="Line\Payment\Api\GetPromotionsByBinActionInterface" type="Line\Payment\Model\GetPromotionsByBinAction" />
+    <!-- <preference for="Line\Payment\Api\PromotionsInterface" type="Line\Payment\Model\Promotions" /> -->
+
+    <!-- Payment Method Code as an argument, for easily update -->
+    <type name="Line\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Line\Payment\Api\Data\ConfigInterface::PAYMENT_METHOD_CODE</argument>
+        </arguments>
+    </type>
+
+    <!-- Custom Debug Logger: implementation -->
+    <virtualType name="LinePaymentLoggerHandler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/line-payment.log</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="LinePaymentLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug" xsi:type="object">LinePaymentLoggerHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Custom Debug Logger: injections -->
+    <type name="Line\Payment\Model\Client\Connector">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\Promotions\Connector">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Gateway\Response\DebuggerHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Gateway\Response\RefundHandler">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\GetPromotionsAction">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\Promotions\DataConverter">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\GetEmittersAction">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\Adapter">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+
+
+    <!-- ********* -->
+    <!-- Payment Facade: backbone for the entire payment implementation -->
+    <virtualType name="LinePaymentFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Line\Payment\Api\Data\ConfigInterface::PAYMENT_METHOD_CODE</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form\Cc</argument>
+            <argument name="infoBlockType" xsi:type="string">Line\Payment\Block\Adminhtml\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">LinePaymentValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">LinePaymentCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">LinePaymentValidatorPool</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- ********* -->
+    <!-- Value Handler Pool: implementation -->
+    <virtualType name="LinePaymentValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">LinePaymentConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="LinePaymentConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">Line\Payment\Gateway\Config\Config</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- ********* -->
+    <!-- Command Pool types: defines each available command -->
+    <virtualType name="LinePaymentCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="capture" xsi:type="string">LinePaymentCaptureCommand</item>
+                <item name="refund" xsi:type="string">LinePaymentRefundCommand</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Command: Capture definition -->
+    <virtualType name="LinePaymentCaptureCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="requestBuilder" xsi:type="object">LinePaymentCaptureRequest</argument>
+            <argument name="transferFactory" xsi:type="object">Line\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="client" xsi:type="object">Line\Payment\Gateway\Http\Client\TransactionSale</argument>
+            <argument name="handler" xsi:type="object">LinePaymentCaptureHandlerChain</argument>
+            <argument name="validator" xsi:type="object">Line\Payment\Gateway\Validator\Pool</argument>
+            <argument name="errorMessageMapper" xsi:type="object">Line\Payment\Gateway\ErrorMapper\ErrorMessageMapper</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Command: Refund definition -->
+    <virtualType name="LinePaymentRefundCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+        <arguments>
+            <argument name="client" xsi:type="object">Line\Payment\Gateway\Http\Client\TransactionRefund</argument>
+            <argument name="transferFactory" xsi:type="object">Line\Payment\Gateway\Http\TransferFactory</argument>
+            <argument name="requestBuilder" xsi:type="object">Line\Payment\Gateway\Request\RefundDataBuilder</argument>
+            <argument name="validator" xsi:type="object">Line\Payment\Gateway\Validator\RefundValidator</argument>
+            <argument name="handler" xsi:type="object">Line\Payment\Gateway\Response\RefundHandler</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Capture Command: Request Builders -->
+    <virtualType name="LinePaymentCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+        <arguments>
+            <argument name="builders" xsi:type="array">
+                <item name="customer" xsi:type="string">Line\Payment\Gateway\Request\CustomerInformationBuilder</item>
+                <item name="sales_channel" xsi:type="string">Line\Payment\Gateway\Request\SalesChannelDataBuilder</item>
+                <item name="currency_code" xsi:type="string">Line\Payment\Gateway\Request\CurrencyCodeDataBuilder</item>
+                <item name="customer_identifier" xsi:type="string">Line\Payment\Gateway\Request\CustomerIdentifierDataBuilder</item>
+                <item name="transaction_details" xsi:type="string">Line\Payment\Gateway\Request\DetailsDataBuilder</item>
+                <item name="payment_information" xsi:type="string">Line\Payment\Gateway\Request\PaymentDataBuilder</item>
+                <!-- Pool that allows add extra fields into the request by external modules -->
+                <item name="integration_pool" xsi:type="string">Line\Payment\Gateway\Request\IntegrationPool</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Command: Capture Response Handlers -->
+    <virtualType name="LinePaymentCaptureHandlerChain" type="Magento\Payment\Gateway\Response\HandlerChain">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="debug_response_body" xsi:type="string">Line\Payment\Gateway\Response\DebuggerHandler</item>
+                <item name="transaction" xsi:type="string">Line\Payment\Gateway\Response\TransactionHandler</item>
+                <item name="credit_card" xsi:type="string">Line\Payment\Gateway\Response\CreditCardHandler</item>
+                <item name="payment_information" xsi:type="string">Line\Payment\Gateway\Response\PaymentInformationHandler</item>
+                <!-- <item name="integration_pool" xsi:type="string">Line\Payment\Gateway\Response\IntegrationPool</item> -->
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- ********* -->
+    <!-- Validator Pool: implementation -->
+    <virtualType name="LinePaymentValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="linePaymentMainValidator" xsi:type="string">Line\Payment\Gateway\Validator\Pool</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Validators: Custom validators to test API response -->
+    <type name="Line\Payment\Gateway\Validator\Pool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="response" xsi:type="object">Line\Payment\Gateway\Validator\ResponseValidator</item>
+                <item name="payment" xsi:type="object">Line\Payment\Gateway\Validator\PaymentValidator</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- ********* -->
+    <!-- Error Messages: Error codes implementation -->
+    <virtualType name="Line\Payment\Gateway\ErrorMapper\ConfigReader" type="Magento\Payment\Gateway\ErrorMapper\VirtualConfigReader">
+        <arguments>
+            <argument name="fileName" xsi:type="string">error_mapping.xml</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Line\Payment\Gateway\ErrorMapper\MappingData" type="Magento\Payment\Gateway\ErrorMapper\MappingData">
+        <arguments>
+            <argument name="reader" xsi:type="object">Line\Payment\Gateway\ErrorMapper\ConfigReader</argument>
+            <argument name="cacheId" xsi:type="string">line_payment_error_mapper</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Line\Payment\Gateway\ErrorMapper\ErrorMessageMapper" type="Magento\Payment\Gateway\ErrorMapper\ErrorMessageMapper">
+        <arguments>
+            <argument name="messageMapping" xsi:type="object">Line\Payment\Gateway\ErrorMapper\MappingData</argument>
+        </arguments>
+    </virtualType>
+
+    <!-- ********* -->
+</config>

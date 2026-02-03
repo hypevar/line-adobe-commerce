@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2023 Line. All rights reserved.
+ */
+-->
+<payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
+    <groups>
+        <group id="linepayments">
+            <label>Line Payments</label>
+        </group>
+    </groups>
+    <methods>
+        <method name="linepayment">
+            <allow_multiple_address>0</allow_multiple_address>
+        </method>
+    </methods>
+    <credit_cards>
+        <type id="AMEX" order="0">
+            <label>American Express</label>
+        </type>
+        <type id="MASTERCREDITO" order="10">
+            <label>MasterCard Crédito</label>
+        </type>
+        <type id="MASTERDEBITO" order="20">
+            <label>MasterCard Débito</label>
+        </type>
+        <type id="VISACREDITO" order="30">
+            <label>Visa Crédito</label>
+        </type>
+        <type id="VISADEBITO" order="40">
+            <label>Visa Débito</label>
+        </type>
+    </credit_cards>
+</payment>

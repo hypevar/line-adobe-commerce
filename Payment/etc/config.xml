@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2023 Line. All rights reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <linepayment>
+                <active>0</active>
+                <title>Line Payment (Credit Card)</title>
+                <module_mode>sandbox</module_mode>
+                <sandbox_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <production_api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <sandbox_url>https://ccs.4fsoluciones.com.ar/linerestapitest/api</sandbox_url>
+                <production_url>https://ccs.4fsoluciones.com.ar/linerestapi/api</production_url>
+                <debug_enabled>0</debug_enabled>
+                <document_types>DNI</document_types>
+                <order_status>processing</order_status>
+                <terminal_system>TERM001</terminal_system>
+
+                <!-- Promotions configuration options -->
+                <promotions_sandbox_url>https://api.staging.line.net.ar</promotions_sandbox_url>
+                <promotions_production_url>https://api.dashboard.line.net.ar</promotions_production_url>
+                <promotions_marketplace>magento</promotions_marketplace>
+                <promotions_account>12344556</promotions_account>
+                <installments_filter_enabled>0</installments_filter_enabled>
+                <installments_filter_configuration></installments_filter_configuration>
+
+                <!-- TLS versión 1.2 by default -->
+                <api_version>v1</api_version>
+                <api_ssl_version>6</api_ssl_version>
+                <api_ssl_is_active>1</api_ssl_is_active>
+                <sort_order>5</sort_order>
+
+                <credit_card_types>AMEX,MASTERCREDITO,MASTERDEBITO,VISACREDITO,VISADEBITO</credit_card_types>
+                <cctypes_mapper><![CDATA[{"AMEX":"x","MASTERCREDITO":"x","MASTERDEBITO":"x","VISACREDITO":"x","VISADEBITO":"x"}]]></cctypes_mapper>
+                <useccv>1</useccv>
+                <display_installments_price>0</display_installments_price>
+                <is_gateway>1</is_gateway>
+                <is_offline>0</is_offline>
+                <can_use_checkout>1</can_use_checkout>
+                <can_use_internal>1</can_use_internal>
+
+                <can_initialize>0</can_initialize>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <!-- partially implemented -->
+                <can_refund>0</can_refund>
+                <!--
+                    <can_void>1</can_void>
+                    <can_cancel>1</can_cancel>
+                -->
+                <model>LinePaymentFacade</model>
+                <group>Line_Payment</group>
+                <payment_action>authorize_capture</payment_action>
+                <privateInfoKeys>token,bin</privateInfoKeys>
+                <paymentInfoKeys>cc_type,cc_exp_month,cc_exp_year,cc_number</paymentInfoKeys>
+                <group>linepayments</group>
+            </linepayment>
+        </payment>
+    </default>
+</config>

@@ -1,0 +1,44 @@
+// /**
+//  * Copyright © 2024 Line. All rights reserved.
+//  */
+
+//
+//  Small improvements for Luma Theme Credit Card form fields
+//  _____________________________________________
+
+& when (@media-common =true) {
+    .checkout-payment-method {
+        .linepayment {
+            .doc-type {
+                min-width: 60px;
+                margin-right: @indent__xs;
+            }
+
+            .cc-method-radio {
+                .control {
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    .field.choice {
+                        margin-right: @indent__base;
+                        margin-bottom: @indent__xs;
+                        display: inline-flex;
+                        align-items: center;
+
+                        input[type="radio"] {
+                            margin: 0 @indent__xs 0 0;
+                            position: relative;
+                            opacity: 1;
+                            pointer-events: all;
+                        }
+
+                        label {
+                            margin: 0;
+                            cursor: pointer;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
