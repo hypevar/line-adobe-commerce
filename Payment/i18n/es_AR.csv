@@ -87,3 +87,6 @@
 "Action","Accion"
 "Add New","Agregar"
 "First column contains the minimum Order amount for the installments list to be available. Installments is a list of coma-separated values. Whatever the Gateway returns, only the list of Installments specified will be displayed.","La <i>Total Min</i>, especifica el de la Orden para aplicar el listado de la columna Cuotas. El listado de Cuotas a mostrar es una lista de valores separados por coma, ej: 1,2,3,6,9,12. El primer match, de menor a mayor, será el utilizado. Solo se mostraran las cuotas de la columna <i>Cuotas a Mostrar</i> que existan en la respuesta del Gateway."
+"Please enter between 15 and 20 digits.", "Por favor ingrese entre 15 y 20 dígitos."
+"Installment surcharge","Recargo por cuotas"
+"Installment surcharge %1 payments %2%","Recargo %1 cuotas %2%"

@@ -1,26 +1,32 @@
 /**
- * Copyright © 2024 Line. All rights reserved.
+ * Copyright © 2026 Line. All rights reserved.
  */
 define([
     'jquery',
     'ko',
+    'underscore',
     'Magento_Checkout/js/view/payment/default',
     'Magento_Ui/js/model/messageList',
     'Line_Payment/js/model/config',
     'Line_Payment/js/action/get-promotions-by-bin',
     'Line_Payment/js/action/get-promotions',
     'Line_Payment/js/model/promotions',
-    'Magento_Payment/js/model/credit-card-validation/credit-card-data'
-],function (
+    'Magento_Payment/js/model/credit-card-validation/credit-card-data',
+    'Line_Payment/js/view/payment/card-number-mask',
+    'Magento_Checkout/js/model/totals'
+], function (
     $,
     ko,
+    _,
     Component,
     messageList,
     config,
     getPromotionsByBinAction,
     getPromotionsAction,
     model,
-    creditCardData
+    creditCardData,
+    cardNumberMask,
+    checkoutTotals
 ) {
     'use strict';
 
@@ -40,6 +46,7 @@ define([
             selectedMerchantNumber: ko.observable(false),
             creditCardMethod: 'CREDIT',
             isInstallmentsVisible: ko.observable(true),
+            creditCardDocumentType: 'DNI',
 
             code: 'linepayment',
             // final installment value to be sent
@@ -117,25 +124,42 @@ define([
                 // clean up previously selected, if any
                 self.installments('');
                 self.availableInstallments(promos);
+                // reset selected plan when installment list changes
+                model.selectedPlan(null);
 
                 if (promos && promos.length === 1) {
                     self.installments(promos[0].value);
+                    model.selectedPlan(promos[0]);
                 }
             });
 
-            // Set credit card number to credit card data object
-            this.creditCardNumber.subscribe(function (value) {
-                self.selectedCardType(null);
-                self.selectedCardBrand(null);
-                self.creditCardType(null);
-                self.creditCardBrand(null);
-                self.creditCardExpYear(null);
-                self.creditCardExpMonth(null);
-                self.availableInstallments(false);
-                self.selectedMerchantNumber(false);
-                self.installments(null);
+            // When installment selection changes, update selectedPlan on the model
+            this.installments.subscribe(function (qty) {
+                if (!qty) {
+                    model.selectedPlan(null);
+                    return;
+                }
+                var plans = self.availableInstallments() || [];
+                var plan  = _.find(plans, function (p) { return p.value == qty; }) || null;
+                model.selectedPlan(plan);
+            });
 
-                if (value === '' || value === null) {
+            // Set credit card number to credit card data object
+            this.creditCardNumber.subscribe(_.debounce(function (value) {
+                value = value.replace(/\s/g, '');
+
+                // If value is empty or less than 15 digits reset
+                if (!value || value.length < 15) {
+                    self.selectedCardType(null);
+                    self.selectedCardBrand(null);
+                    self.creditCardType(null);
+                    self.creditCardBrand(null);
+                    self.creditCardExpYear(null);
+                    self.creditCardExpMonth(null);
+                    self.availableInstallments(false);
+                    self.selectedMerchantNumber(false);
+                    self.installments(null);
+
                     return false;
                 }
 
@@ -143,23 +167,24 @@ define([
                 if (this.loadingPromotions) return;
 
                 // if we already loaded promotions, then clean up
-                if ((!value.length || value.length != 16) && self.availableInstallments().length) {
+                if ((!value.length || value.length < 15) && self.availableInstallments().length) {
                     self.availableInstallments(false);
                     self.installments(0);
                 }
 
-                // if we're not ready to evaluate first CC numbers
-                // wait for the next change event
-                if (value.length != 16) return;
+                // if card didn't reach 15 digits, wait for more input
+                if (value.length < 15) {
+                    return;
+                }
 
                 $('body').trigger('processStart');
 
-                // retrieve bin number from field value
-                var bin = value.substr(0,6);
+                // retrieve bin number from field value (first 6 digits)
+                var bin = value.substr(0, 6);
 
                 // retrieve promotions
                 getPromotionsByBinAction(config, bin, false)
-                    .done(function(response) {
+                    .done(function (response) {
 
 
                         // BIN not found (case: error 500) - won't allow anything
@@ -190,14 +215,14 @@ define([
                             // No promotions for this specific brand-bank
                             // pull promotions for all Card Brands
                             getPromotionsAction(config, response.result.cardBrand, false)
-                            .done(function (response) {
-                                // return response.result;
-                                model.loadPromotions(response.result);
-                                $('body').trigger('processStop');
-                            });
+                                .done(function (response) {
+                                    // return response.result;
+                                    model.loadPromotions(response.result);
+                                    $('body').trigger('processStop');
+                                });
                         }
                     });
-            });
+            }, 800));
 
             // Set expiration year to credit card data object
             this.creditCardExpYear.subscribe(function (value) {
@@ -232,7 +257,7 @@ define([
         /**
          * @return {string}
          */
-        getCode: function() {
+        getCode: function () {
             return config.getCode();
         },
 
@@ -240,6 +265,8 @@ define([
          * @return {Object}
          */
         getData: function () {
+            var plan = model.selectedPlan();
+
             var data = {
                 'method': this.item.method,
                 'additional_data': {
@@ -247,15 +274,15 @@ define([
                     'cardholder_doc_number': this.creditCardDocumentNumber(),
                     'cardholder_doc_type': this.creditCardDocumentType(),
                     'credit_card_number': this.creditCardNumber(),
-                    'credit_card_type': this.creditCardType(),
+                    'credit_card_type': this.creditCardBrand(),
                     'credit_card_exp_year': this.creditCardExpYear(),
                     'credit_card_exp_month': this.creditCardExpMonth(),
                     'credit_card_cvv': this.creditCardVerificationNumber(),
-                    'credit_card_type': this.creditCardBrand(),
                     'cc_method': this.creditCardMethod(),
                     'credit_card_method': this.creditCardType(),
                     'installments': this.installments(),
-                    'merchant_number': this.selectedMerchantNumber()
+                    'merchant_number': this.selectedMerchantNumber(),
+                    'installment_rate': plan ? plan.rate : 1.0
                 }
             };
 
@@ -265,7 +292,7 @@ define([
         /**
          * @return {boolean}
          */
-        isActive: function() {
+        isActive: function () {
             return config.getIsActive();
         },
 

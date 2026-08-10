@@ -49,6 +49,11 @@ interface PaymentAttributeInterface
     public const PAYMENT_MERCHANT_NUMBER = 'merchant_number';
 
     /**
+     * Rate coefficient from selected installment (e.g. 1.15 = 15% surcharge)
+     */
+    public const PAYMENT_INSTALLMENT_RATE = 'installment_rate';
+
+    /**
      * Authorization Code from the Gateway response object
      */
     public const CREDIT_CARD_AUTORIZATION_CODE = 'card_authorization_code';

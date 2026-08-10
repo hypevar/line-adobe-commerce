@@ -21,6 +21,7 @@ define([
 
     var plans = ko.observable([]),
         activePlans = ko.observable([]),
+        selectedPlan = ko.observable(null),
         displayInstallmentPrice = config.displayInstallmentPrice(),
         gatewayPromotions = ko.observable({}),
         paymentData = ko.observable({
@@ -66,7 +67,8 @@ define([
         return {
             value: qty,
             label: display,
-        }
+            rate: parseFloat(data.rate) || 1.0
+        };
     };
 
     /**
@@ -215,6 +217,8 @@ define([
         paymentData: paymentData,
         // Contains available installments
         promotionsList: activePlans,
+        // Holds the currently selected installment plan (including rate)
+        selectedPlan: selectedPlan,
 
         /**
          * Process Gateway response for the given Credit Card number

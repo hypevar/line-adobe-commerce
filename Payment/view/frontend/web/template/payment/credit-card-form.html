@@ -1,6 +1,6 @@
 <!--
 /**
- * Copyright © 2023 Line. All rights reserved.
+ * Copyright © 2026 Line. All rights reserved.
  */
 -->
 <fieldset data-bind="attr: {class: 'fieldset payment items ccard ' + getCode(), id: 'payment_form_' + getCode()}">
@@ -116,7 +116,6 @@
                                                 options: getCcDocumentTypes(),
                                                 optionsValue: 'value',
                                                 optionsText: 'type',
-                                                optionsCaption: $t('Type'),
                                                 value: creditCardDocumentType">
                         </select>
                     </div>
@@ -141,7 +140,7 @@
                 <span><!-- ko i18n: 'Credit Card Number'--><!-- /ko --></span>
             </label>
             <div class="control">
-                <input type="number" name="payment[cc_number]" class="input-text required" value=""
+                <input type="text" inputmode="numeric" name="payment[cc_number]" class="input-text required" value=""
                     data-bind="attr: {
                             autocomplete: off,
                             id: getCode() + '_cc_number',
@@ -149,11 +148,13 @@
                             title: $t('Credit Card Number'),
                             'data-container': getCode() + '-cc-number',
                             'data-validate': JSON.stringify({
-                                'required-number':true
+                                'required':true,
+                                'validate-cc-number-length': true
                             })},
                         enable: isActive($parents),
                         value: creditCardNumber,
-                        valueUpdate: 'keyup' "/>
+                        valueUpdate: 'keyup',
+                        cardNumberFormat: creditCardNumber "/>
             </div>
         </div>
 
