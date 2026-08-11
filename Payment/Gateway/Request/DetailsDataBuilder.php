@@ -61,10 +61,18 @@ class DetailsDataBuilder implements BuilderInterface
         $businessNumber = $payment->getPayment()
             ->getAdditionalInformation(PaymentAttributeInterface::PAYMENT_MERCHANT_NUMBER);
 
+        // Rate coefficient from selected installment (e.g. 1.15 = 15% surcharge)
+        // Defaults to 1.0 (no surcharge) if not present
+        $rate = (float) ($payment->getPayment()
+            ->getAdditionalInformation(PaymentAttributeInterface::PAYMENT_INSTALLMENT_RATE) ?: 1.0);
+
+        // Total amount to charge, including installment surcharge
+        $amount = $order->getGrandTotalAmount() * $rate;
+
         // Details data structure
         $details = [
             self::FIELD_DETAIL_BUSINESS_NUMBER => $businessNumber,
-            self::FIELD_DETAIL_AMOUNT => $order->getGrandTotalAmount(),
+            self::FIELD_DETAIL_AMOUNT => $amount,
             self::FIELD_DETAIL_INSTALLMENTS => $installments,
             self::FIELD_CUSTOMER_IDENTIFIER => $identifier,
             self::FIELD_REFERENCE => $incrementId

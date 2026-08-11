@@ -33,7 +33,8 @@ class DataAssignObserver extends AbstractDataAssignObserver
         self::CREDIT_CARD_EXP_MONTH,
         self::CREDIT_CARD_CVV,
         self::PAYMENT_INSTALLMENTS,
-        self::PAYMENT_MERCHANT_NUMBER
+        self::PAYMENT_MERCHANT_NUMBER,
+        self::PAYMENT_INSTALLMENT_RATE
     ];
 
     /**

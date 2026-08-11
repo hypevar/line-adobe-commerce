@@ -93,10 +93,10 @@ class PromotionsWithoutBank
         // In that case, we won't evaluate, cause values were not set (hence: without validity)
         $startDate = $promo['startDate'] ?? false;
         $endDate = $promo['endDate'] ?? false;
-        $current = $this->timezone->date(null, null, true, false)->format('Y-m-d');
+        $current = $this->timezone->date(null, null, true, false)->format('Y-m-d H:i:s');
 
         if ($startDate) {
-            $startDate = $this->timezone->date(new \DateTime($startDate))->format('Y-m-d');
+            $startDate = $this->timezone->date(new \DateTime($startDate))->format('Y-m-d H:i:s');
 
             if ($startDate > $current) {
                 return false;
@@ -104,7 +104,7 @@ class PromotionsWithoutBank
         }
 
         if ($endDate) {
-            $endDate = $this->timezone->date(new \DateTime($endDate))->format('Y-m-d');
+            $endDate = $this->timezone->date(new \DateTime($endDate))->format('Y-m-d H:i:s');
 
             if ($endDate < $current) {
                 return false;

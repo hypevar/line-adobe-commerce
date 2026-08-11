@@ -60,10 +60,11 @@ class PaymentDataBuilder implements BuilderInterface
 
         // Credit Card Type
         $creditCardType = $additional[PaymentAttributeInterface::CREDIT_CARD_METHOD];
-        // $creditCardType = $this->cardType->get($creditCardEmitterCode);
+
 
         // Credit Card Number
         $creditCardNumber = $additional[PaymentAttributeInterface::CREDIT_CARD_NUMBER];
+        $formattedCardNumber = trim(str_replace(' ', '', $creditCardNumber));
 
         // Expiration Date
         $creditCardExpirationDate =  $this->expiration->get(
@@ -80,7 +81,7 @@ class PaymentDataBuilder implements BuilderInterface
         $holderDocumentNumber = $additional[PaymentAttributeInterface::CREDIT_CARD_DOC_NUMBER];
 
         $result = [
-            self::FIELD_CREDIT_CARD_NUMBER => $creditCardNumber,
+            self::FIELD_CREDIT_CARD_NUMBER => $formattedCardNumber,
             self::FIELD_CREDIT_CARD_EXPIRATION_DATE => $creditCardExpirationDate,
             self::FIELD_CREDIT_CARD_CVV => $creditCardCVV,
             self::FIELD_CREDIT_CARD_TYPE => $creditCardType,

@@ -1,10 +1,18 @@
-# line-adobe-commerce
-Line Payments Plugin for Adobe Commerce / Magento
+# Line Payments para Adobe Commerce / Magento
 
-# WiP
+Implementación de los módulos de Line Payments para Adobe Commerce y Magento.
 
-Módulo compatible con Adobe Commerc y Magento
+## Módulos
 
-Los módulos de este repositorio son una divergencia del úlimo módulo oficial conocido.
+- `line/module-payment` (`Line_Payment`), versión `0.4.2`: gateway de pago para checkout.
+- `line/module-verified-purchase` (`Line_VerifiedPurchase`), versión `0.4.0`: flujo de verificación antifraude.
 
-Esto no es el módulo oficial y sigue en evolución.
+Ambos módulos declaran compatibilidad con PHP 8.1, 8.2 y 8.3, y con los componentes Magento 2.4 correspondientes.
+
+## Documentación
+
+Consultar la [guía de configuración](docs/configuracion.md) para los parámetros de gateway, promociones, cuotas, Verified Purchase, estados de orden, logs y recomendaciones operativas.
+
+## Estado del proyecto
+
+Los módulos de este repositorio son una divergencia del último módulo oficial conocido. No constituyen el módulo oficial y continúan en evolución.
