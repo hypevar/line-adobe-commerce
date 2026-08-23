@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © 2025 Line. All rights reserved.
+ */
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         colors="true"
+         bootstrap="vendor/autoload.php"
+         cacheResultFile=".phpunit.result.cache">
+    <!--
+        The suite needs the Magento framework on the autoloader. Run it from inside a Magento
+        installation, or after `composer install` against repo.magento.com from this directory.
+    -->
+    <testsuites>
+        <testsuite name="Line Payment Unit Tests">
+            <directory>Test/Unit</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

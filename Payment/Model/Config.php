@@ -8,8 +8,9 @@ declare(strict_types=1);
 namespace Line\Payment\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Line\Payment\Api\Data\Config\SSLVersionsInterface;
 use Line\Payment\Api\Data\ConfigInterface;
-use Line\Payment\Model\StoreConfigResolver;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Serialize\Serializer\Json;
 
 /**
@@ -17,23 +18,39 @@ use Magento\Framework\Serialize\Serializer\Json;
  */
 class Config implements ConfigInterface
 {
+    /**
+     * Maps a throttle dimension onto the configuration path holding its threshold
+     */
+    private const ANTIFRAUD_THRESHOLD_PATHS = [
+        'card' => self::XPATH_ANTIFRAUD_MAX_DECLINES_CARD,
+        'bin' => self::XPATH_ANTIFRAUD_MAX_DECLINES_BIN,
+        'quote' => self::XPATH_ANTIFRAUD_MAX_DECLINES_QUOTE,
+        'email' => self::XPATH_ANTIFRAUD_MAX_DECLINES_EMAIL,
+        'customer' => self::XPATH_ANTIFRAUD_MAX_DECLINES_CUSTOMER,
+        'ip' => self::XPATH_ANTIFRAUD_MAX_DECLINES_IP
+    ];
+
     private StoreConfigResolver $storeConfigResolver;
     private ScopeConfigInterface $config;
     private Json $serializer;
+    private EncryptorInterface $encryptor;
 
     /**
      * @param StoreConfigResolver $storeConfigResolver
      * @param ScopeConfigInterface $scopeConfig
      * @param Json $serializer
+     * @param EncryptorInterface $encryptor
      */
     public function __construct(
         StoreConfigResolver $storeConfigResolver,
         ScopeConfigInterface $scopeConfig,
-        Json $serializer
+        Json $serializer,
+        EncryptorInterface $encryptor
     ) {
         $this->storeConfigResolver = $storeConfigResolver;
         $this->config = $scopeConfig;
         $this->serializer = $serializer;
+        $this->encryptor = $encryptor;
     }
 
     /**
@@ -98,9 +115,11 @@ class Config implements ConfigInterface
      */
     public function getProductionApiKey(): string
     {
-        return $this->getConfigValue(
-            self::XPATH_PRODUCTION_API_KEY,
-            $this->storeConfigResolver->getStoreId()
+        return $this->decryptCredential(
+            $this->getConfigValue(
+                self::XPATH_PRODUCTION_API_KEY,
+                $this->storeConfigResolver->getStoreId()
+            )
         );
     }
 
@@ -142,10 +161,35 @@ class Config implements ConfigInterface
      */
     public function getSandboxApiKey(): string
     {
-        return $this->getConfigValue(
-            self::XPATH_SANDBOX_API_KEY,
-            $this->storeConfigResolver->getStoreId()
+        return $this->decryptCredential(
+            $this->getConfigValue(
+                self::XPATH_SANDBOX_API_KEY,
+                $this->storeConfigResolver->getStoreId()
+            )
         );
+    }
+
+    /**
+     * Credentials are stored through an `obscure` backend model, so the raw value is ciphertext.
+     *
+     * Magento's encryptor returns an empty string for anything it cannot decrypt, which would
+     * silently send an empty Authorization header. A value that does not carry the `<version>:<key>:`
+     * prefix was stored in the clear by an earlier release and is passed through unchanged, so
+     * adding this call cannot break an instance whose key was pasted before the field was obscured.
+     *
+     * @param mixed $value
+     *
+     * @return string
+     */
+    private function decryptCredential($value): string
+    {
+        $value = (string) $value;
+
+        if ($value === '' || !preg_match('/^\d+:\d+:/', $value)) {
+            return $value;
+        }
+
+        return (string) $this->encryptor->decrypt($value);
     }
 
     public function getSandboxEndpointUrl(): string
@@ -244,10 +288,14 @@ class Config implements ConfigInterface
      */
     public function getApiSslVersion(): int
     {
-        return (int) $this->getConfigValue(
+        $value = (int) $this->getConfigValue(
             self::XPATH_API_SSL_VERSION,
             $this->storeConfigResolver->getStoreId()
         );
+
+        return isset(SSLVersionsInterface::SSL_VERSIONS_OPTIONS_LIST[$value])
+            ? $value
+            : CURL_SSLVERSION_TLSv1_2;
     }
 
     /**
@@ -357,5 +405,77 @@ class Config implements ConfigInterface
         }
 
         return $results;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPromotionsCacheLifetime(): int
+    {
+        return (int) $this->getConfigValue(
+            self::XPATH_PROMOTIONS_CACHE_LIFETIME,
+            $this->storeConfigResolver->getStoreId()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAntifraudEnabled(): bool
+    {
+        return $this->getConfigFlag(
+            self::XPATH_ANTIFRAUD_ENABLED,
+            $this->storeConfigResolver->getStoreId()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAntifraudWindow(): int
+    {
+        $value = (int) $this->getConfigValue(
+            self::XPATH_ANTIFRAUD_WINDOW,
+            $this->storeConfigResolver->getStoreId()
+        );
+
+        return $value > 0 ? $value : 60;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAntifraudThreshold(string $dimension): int
+    {
+        if (!isset(self::ANTIFRAUD_THRESHOLD_PATHS[$dimension])) {
+            return 0;
+        }
+
+        return (int) $this->getConfigValue(
+            self::ANTIFRAUD_THRESHOLD_PATHS[$dimension],
+            $this->storeConfigResolver->getStoreId()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAntifraudStoreBreaker(): int
+    {
+        return (int) $this->getConfigValue(
+            self::XPATH_ANTIFRAUD_STORE_BREAKER,
+            $this->storeConfigResolver->getStoreId()
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAntifraudIpEnabled(): bool
+    {
+        return $this->getConfigFlag(
+            self::XPATH_ANTIFRAUD_USE_IP,
+            $this->storeConfigResolver->getStoreId()
+        );
     }
 }

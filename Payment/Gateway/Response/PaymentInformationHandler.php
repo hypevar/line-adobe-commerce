@@ -22,7 +22,16 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 class PaymentInformationHandler implements HandlerInterface
 {
     /**
-     * Fields that will be removed from additional_information for security reasons
+     * Fields that will be removed from additional_information for security reasons.
+     *
+     * As of the request-scoped card container these fields are no longer written by the checkout
+     * observer, so on a fresh quote there is nothing here to remove. The list is kept on purpose:
+     * quotes created by 0.4.2 still carry the PAN and the CVV, and they keep passing through this
+     * handler for as long as they live. Removing it would leave that data behind.
+     *
+     * This only reaches rows that authorize again. Declined and abandoned 0.4.2 rows never pass
+     * through here, so purging those is an operational task run outside the module.
+     *
      * @var string[]
      */
     private const ADDITIONAL_FIELDS_TO_REMOVE = [

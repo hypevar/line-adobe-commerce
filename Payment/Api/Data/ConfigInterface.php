@@ -57,6 +57,19 @@ interface ConfigInterface
     public const XPATH_API_VERSION = 'api_version';
     public const XPATH_API_SSL_IS_ACTIVE = 'api_ssl_is_active';
     public const XPATH_API_SSL_VERSION = 'api_ssl_version';
+
+    public const XPATH_PROMOTIONS_CACHE_LIFETIME = 'promotions_cache_lifetime';
+
+    public const XPATH_ANTIFRAUD_ENABLED = 'antifraud_enabled';
+    public const XPATH_ANTIFRAUD_WINDOW = 'antifraud_window';
+    public const XPATH_ANTIFRAUD_MAX_DECLINES_CARD = 'antifraud_max_declines_card';
+    public const XPATH_ANTIFRAUD_MAX_DECLINES_BIN = 'antifraud_max_declines_bin';
+    public const XPATH_ANTIFRAUD_MAX_DECLINES_QUOTE = 'antifraud_max_declines_quote';
+    public const XPATH_ANTIFRAUD_MAX_DECLINES_EMAIL = 'antifraud_max_declines_email';
+    public const XPATH_ANTIFRAUD_MAX_DECLINES_CUSTOMER = 'antifraud_max_declines_customer';
+    public const XPATH_ANTIFRAUD_MAX_DECLINES_IP = 'antifraud_max_declines_ip';
+    public const XPATH_ANTIFRAUD_STORE_BREAKER = 'antifraud_store_breaker';
+    public const XPATH_ANTIFRAUD_USE_IP = 'antifraud_use_ip';
     /**#@-*/
 
     /**
@@ -234,4 +247,48 @@ interface ConfigInterface
      * @return array
      */
     public function getInstallmentsFilterConfiguration(): array;
+
+    /**
+     * How long a promotions payload stays cached, in seconds
+     *
+     * @return int
+     */
+    public function getPromotionsCacheLifetime(): int;
+
+    /**
+     * Whether the card-testing throttle is active
+     *
+     * @return bool
+     */
+    public function isAntifraudEnabled(): bool;
+
+    /**
+     * Length of the throttle counting window, in minutes
+     *
+     * @return int
+     */
+    public function getAntifraudWindow(): int;
+
+    /**
+     * Declines tolerated within the window for the given dimension
+     *
+     * @param string $dimension
+     *
+     * @return int
+     */
+    public function getAntifraudThreshold(string $dimension): int;
+
+    /**
+     * Store-wide decline count that flips the throttle into strict mode
+     *
+     * @return int
+     */
+    public function getAntifraudStoreBreaker(): int;
+
+    /**
+     * Whether the remote address is used as a throttle dimension
+     *
+     * @return bool
+     */
+    public function isAntifraudIpEnabled(): bool;
 }

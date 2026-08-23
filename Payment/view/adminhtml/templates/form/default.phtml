@@ -15,7 +15,7 @@
             <span><?= $escaper->escapeHtml(__('Information')) ?></span>
         </label>
         <div class="admin__field-control">
-            <?= /* @noEscape */ $block->getInfoData('additional_information') ?>
+            <?= $escaper->escapeHtml($block->getInfoData('additional_information')) ?>
         </div>
     </div>
 </fieldset>

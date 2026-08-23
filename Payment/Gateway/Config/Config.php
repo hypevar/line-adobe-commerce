@@ -190,14 +190,13 @@ class Config extends GatewayConfig
     }
 
     /**
+     * Credentials are stored encrypted; the module config is the single place that decrypts them.
+     *
      * @return string
      */
     public function getProductionApiKey(): string
     {
-        return $this->getValue(
-            self::XPATH_PRODUCTION_API_KEY,
-            $this->storeConfigResolver->getStoreId()
-        );
+        return $this->moduleConfig->getProductionApiKey();
     }
 
     /**
@@ -205,10 +204,7 @@ class Config extends GatewayConfig
      */
     public function getSandboxApiKey(): string
     {
-        return $this->getValue(
-            self::XPATH_SANDBOX_API_KEY,
-            $this->storeConfigResolver->getStoreId()
-        );
+        return $this->moduleConfig->getSandboxApiKey();
     }
 
     /**

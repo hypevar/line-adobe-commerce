@@ -7,7 +7,9 @@ declare(strict_types=1);
 
 namespace Line\Payment\Gateway\Http\Client;
 
+use Line\Payment\Api\Data\ConfigInterface;
 use Line\Payment\Api\Data\ErrorCodesInterface;
+use Line\Payment\Api\Request\AttributeInterface;
 use Line\Payment\Gateway\DataReader;
 use Line\Payment\Model\Adapter;
 use Magento\Payment\Gateway\Http\ClientException;
@@ -18,27 +20,52 @@ use Psr\Log\LoggerInterface;
 
 abstract class AbstractTransaction implements ClientInterface
 {
+    /**
+     * Values replaced with `****` before the payload reaches the log.
+     *
+     * The list is explicit rather than null: passing null to
+     * Magento\Payment\Model\Method\Logger::debug() means "replace nothing", which wrote the PAN,
+     * the CVV and the expiry to payment.log in the clear.
+     *
+     * @var string[]
+     */
+    private const DEBUG_REPLACE_KEYS = [
+        AttributeInterface::FIELD_CREDIT_CARD_NUMBER,
+        AttributeInterface::FIELD_CREDIT_CARD_CVV,
+        AttributeInterface::FIELD_CREDIT_CARD_EXPIRATION_DATE,
+        AttributeInterface::FIELD_CARDHOLDER_FULLNAME,
+        AttributeInterface::FIELD_CARDHOLDER_DOCUMENT_NUMBER,
+        AttributeInterface::FIELD_CARDHOLDER_EMAIL,
+        AttributeInterface::FIELD_CUSTOMER_IP,
+        AttributeInterface::FIELD_TRACK_I,
+        AttributeInterface::FIELD_TRACK_II
+    ];
+
     protected Adapter $adapter;
     protected DataReader $reader;
     protected LoggerInterface $logger;
     protected Logger $customLogger;
+    protected ConfigInterface $config;
 
     /**
      * @param LoggerInterface $logger
      * @param Logger $customLogger
      * @param Adapter $adapter
      * @param DataReader $reader
+     * @param ConfigInterface $config
      */
     public function __construct(
         LoggerInterface $logger,
         Logger $customLogger,
         Adapter $adapter,
-        DataReader $reader
+        DataReader $reader,
+        ConfigInterface $config
     ) {
         $this->logger = $logger;
         $this->customLogger = $customLogger;
         $this->adapter = $adapter;
         $this->reader = $reader;
+        $this->config = $config;
     }
 
     /**
@@ -72,7 +99,9 @@ abstract class AbstractTransaction implements ClientInterface
                 ? $this->reader->readTransaction((array) $response)
                 : $response['object'];
 
-            $this->customLogger->debug($log, null, true);
+            if ($this->config->isDebugEnabled()) {
+                $this->customLogger->debug($log, self::DEBUG_REPLACE_KEYS, true);
+            }
         }
 
         return $response;

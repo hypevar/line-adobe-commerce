@@ -7,7 +7,6 @@ declare(strict_types=1);
 
 namespace Line\Payment\Gateway\Validator;
 
-use Line\Payment\Api\Response\AttributeInterface;
 use Line\Payment\Api\Response\StatusCodeInterface;
 use Line\Payment\Api\Response\StatusInterface;
 use Line\Payment\Api\Response\ValidatorInterface;
@@ -31,8 +30,9 @@ class RefundValidator extends AbstractValidator implements ValidatorInterface
     protected $logger;
 
     /**
-     * @param DataReader $reader
      * @param ResultInterfaceFactory $resultFactory
+     * @param DataReader $reader
+     * @param LoggerInterface $logger
      */
     public function __construct(
         ResultInterfaceFactory $resultFactory,
@@ -64,8 +64,8 @@ class RefundValidator extends AbstractValidator implements ValidatorInterface
                 : false;
 
         if (!$isValid) {
-            $errorMessage[] = $response->getFormattedMessage();
-            $errorCode[] = $statusCode;
+            $errorMessages[] = $response->getFormattedMessage();
+            $errorCodes[] = $statusCode;
             $this->logger->error($response->getCustomerIdentifier());
             $this->logger->error('Could not be refunded');
             $this->logger->error($response->getFormattedMessage());

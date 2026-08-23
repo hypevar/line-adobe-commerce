@@ -10,6 +10,8 @@ namespace Line\Payment\Model;
 use Line\Payment\Api\GetPromotionsActionInterface;
 use Line\Payment\Model\Promotions\Adapter;
 use Line\Payment\Model\Promotions\DataExtractor\PromotionsWithoutBank;
+use Line\Payment\Model\Promotions\Exception\PromotionsUnavailable;
+use Line\Payment\Model\Promotions\PromotionsCache;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -17,17 +19,28 @@ use Psr\Log\LoggerInterface;
  */
 class GetPromotionsAction implements GetPromotionsActionInterface
 {
+    private const CACHE_BUCKET = 'promotions_all';
+
     private Adapter $client;
     private PromotionsWithoutBank $promotionsWithoutBank;
+    private PromotionsCache $cache;
     private LoggerInterface $log;
 
+    /**
+     * @param Adapter $client
+     * @param PromotionsWithoutBank $promotionsWithoutBank
+     * @param PromotionsCache $cache
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         Adapter $client,
         PromotionsWithoutBank $promotionsWithoutBank,
+        PromotionsCache $cache,
         LoggerInterface $logger
     ) {
         $this->client = $client;
         $this->promotionsWithoutBank = $promotionsWithoutBank;
+        $this->cache = $cache;
         $this->log = $logger;
     }
 
@@ -38,27 +51,27 @@ class GetPromotionsAction implements GetPromotionsActionInterface
      */
     public function get(string $cardBrand = ''): array
     {
-        $promotions = [];
+        $cached = $this->cache->load(self::CACHE_BUCKET);
 
-        try {
-            $promotions = $this->client->get(self::ENDPOINT_URL, [], false);
+        if ($cached === null) {
+            try {
+                $cached = $this->client->get(self::ENDPOINT_URL, [], false);
+            } catch (\Throwable $e) {
+                $this->log->error('Promotions lookup failed: ' . $e->getMessage());
 
-            // if brand has been passed, we'll pull all promotions without a bank
-            // this case is for when no promotions where retrieved by BIN,
-            // and we need to pull promotions applied to All CardBrands (from all Banks)
-            if ($cardBrand) {
-                $promotions = $this->promotionsWithoutBank->extractByCardBrand($cardBrand, $promotions);
+                throw new PromotionsUnavailable(
+                    __('Card promotions are not available right now. Please try again in a few minutes.'),
+                    $e
+                );
             }
 
-        } catch (\Exception $e) {
-            $this->log->error($e->getMessage());
-
-            $promotions = [
-                'error' => true,
-                'message' => $e->getMessage()
-            ];
+            $this->cache->save(self::CACHE_BUCKET, '', $cached);
         }
 
-        return $promotions;
+        if ($cardBrand) {
+            return $this->promotionsWithoutBank->extractByCardBrand($cardBrand, $cached);
+        }
+
+        return $cached;
     }
 }

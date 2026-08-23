@@ -29,6 +29,21 @@
                 <installments_filter_enabled>0</installments_filter_enabled>
                 <installments_filter_configuration></installments_filter_configuration>
 
+                <promotions_cache_lifetime>900</promotions_cache_lifetime>
+
+                <!-- Card-testing throttle. Counts declines only, per 60 minute fixed window. -->
+                <antifraud_enabled>1</antifraud_enabled>
+                <antifraud_window>60</antifraud_window>
+                <antifraud_max_declines_card>3</antifraud_max_declines_card>
+                <antifraud_max_declines_bin>20</antifraud_max_declines_bin>
+                <antifraud_max_declines_quote>3</antifraud_max_declines_quote>
+                <antifraud_max_declines_email>5</antifraud_max_declines_email>
+                <antifraud_max_declines_customer>5</antifraud_max_declines_customer>
+                <antifraud_store_breaker>80</antifraud_store_breaker>
+                <!-- Off by default: behind a CDN the remote address collapses to a few edge IPs -->
+                <antifraud_use_ip>0</antifraud_use_ip>
+                <antifraud_max_declines_ip>20</antifraud_max_declines_ip>
+
                 <!-- TLS versión 1.2 by default -->
                 <api_version>v1</api_version>
                 <api_ssl_version>6</api_ssl_version>

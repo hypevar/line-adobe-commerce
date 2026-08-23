@@ -39,12 +39,8 @@ class CustomerIdentifierDataBuilder implements BuilderInterface
     {
         $payment = $this->reader->readPayment($buildSubject);
 
-        /** @TODO: improve validation since there could be an scenario where Braintree is disabled */
-        /** @var OrderAdapter $order */
-        $order = $payment->getOrder();
-
         // generate custom identifier for this particular Order
-        $identifier = $this->identifier->generate($order);
+        $identifier = $this->identifier->generate($payment->getPayment());
 
         return [
             self::FIELD_CUSTOMER_IDENTIFIER => $identifier

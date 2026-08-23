@@ -185,7 +185,8 @@ class Connector
             if ($this->configuration->getApiSslIsActive()) {
                 $request->setOptions([
                     CURLOPT_SSLVERSION => $this->configuration->getApiSslVersion(),
-                    CURLOPT_SSL_VERIFYPEER => false
+                    CURLOPT_SSL_VERIFYPEER => true,
+                    CURLOPT_SSL_VERIFYHOST => 2
                 ]);
             }
 

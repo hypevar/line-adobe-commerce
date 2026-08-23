@@ -81,7 +81,7 @@ class Adapter
      * Executes a Payment operation
      *
      * @param array $attributes
-     *
+     * @return array|ResponseInterface
      */
     public function sale(array $attributes)
     {
@@ -109,16 +109,34 @@ class Adapter
      */
     protected function logMaskedPayload($data)
     {
+        if (!$this->configuration->isDebugEnabled()) {
+            return;
+        }
+
         // mask cvv data
         $data[AttributeInterface::FIELD_CREDIT_CARD_CVV] = 'xxx';
 
         // mask card number, get only bin
-        $card = $data[AttributeInterface::FIELD_CREDIT_CARD_NUMBER];
+        $card = (string) ($data[AttributeInterface::FIELD_CREDIT_CARD_NUMBER] ?? '');
         $maskedCard = substr($card, 0, 6);
-        $maskedCard .= str_repeat('x', strlen($card) - 6);
+        $maskedCard .= str_repeat('x', max(0, strlen($card) - 6));
         $data[AttributeInterface::FIELD_CREDIT_CARD_NUMBER] = $maskedCard;
 
-        $this->logger->info('Payload to execute payment', ['data' => $data]);
+        foreach ([
+            AttributeInterface::FIELD_CREDIT_CARD_EXPIRATION_DATE,
+            AttributeInterface::FIELD_CARDHOLDER_FULLNAME,
+            AttributeInterface::FIELD_CARDHOLDER_DOCUMENT_NUMBER,
+            AttributeInterface::FIELD_CARDHOLDER_EMAIL,
+            AttributeInterface::FIELD_CUSTOMER_IP,
+            AttributeInterface::FIELD_TRACK_I,
+            AttributeInterface::FIELD_TRACK_II
+        ] as $field) {
+            if (isset($data[$field]) && $data[$field] !== '') {
+                $data[$field] = '***';
+            }
+        }
+
+        $this->logger->debug('Payload to execute payment', ['data' => $data]);
     }
 
 }

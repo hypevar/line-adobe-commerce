@@ -189,6 +189,121 @@
                     <comment>First column contains the minimum Order amount for the installments list to be available. Installments is a list of coma-separated values. Whatever the Gateway returns, only the list of Installments specified will be displayed.</comment>
                 </field>
 
+                <field id="promotions_cache_lifetime" translate="label comment" type="text" sortOrder="105"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Promotions Cache Lifetime</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Seconds a promotions payload is reused before the API is called again.</comment>
+                </field>
+
+                <field id="antifraud_enabled" translate="label comment" type="select" sortOrder="150"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Card Testing Protection</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                    </depends>
+                    <comment>Blocks further authorization attempts once a card, a BIN, a quote, an email or a customer accumulates too many declines. Leave enabled.</comment>
+                </field>
+
+                <field id="antifraud_window" translate="label comment" type="text" sortOrder="151"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Counting Window (minutes)</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="antifraud_max_declines_card" translate="label comment" type="text" sortOrder="152"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Max Declines per Card</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                    <comment>Stops CVV and expiry brute force against a single card.</comment>
+                </field>
+
+                <field id="antifraud_max_declines_bin" translate="label comment" type="text" sortOrder="153"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Max Declines per BIN</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                    <comment>The dimension that catches a card-testing run. Keep it above the organic decline volume of your busiest issuer.</comment>
+                </field>
+
+                <field id="antifraud_max_declines_quote" translate="label" type="text" sortOrder="154"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Max Declines per Quote</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="antifraud_max_declines_email" translate="label" type="text" sortOrder="155"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Max Declines per Email</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="antifraud_max_declines_customer" translate="label" type="text" sortOrder="156"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Max Declines per Customer</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="antifraud_store_breaker" translate="label comment" type="text" sortOrder="157"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Store Circuit Breaker</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                    <comment>Store-wide declines within the window that tighten every other threshold. Catches a distributed run that stays under each individual limit. Checkout is never taken offline.</comment>
+                </field>
+
+                <field id="antifraud_use_ip" translate="label comment" type="select" sortOrder="158"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Also Count by IP Address</label>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                    </depends>
+                    <comment>Leave disabled behind a CDN or a load balancer: the remote address collapses to a handful of edge IPs, so one attacker can lock out every customer.</comment>
+                </field>
+
+                <field id="antifraud_max_declines_ip" translate="label" type="text" sortOrder="159"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Max Declines per IP</label>
+                    <frontend_class>validate-number</frontend_class>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/antifraud_enabled">1</field>
+                        <field id="*/*/antifraud_use_ip">1</field>
+                    </depends>
+                </field>
+
                 <field id="api_version" translate="label" type="select" sortOrder="110"
                     showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Api Version</label>

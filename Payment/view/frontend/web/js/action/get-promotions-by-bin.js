@@ -6,7 +6,8 @@ define([
     'jquery',
     'mage/storage',
     'Magento_Ui/js/model/messageList',
-    'mage/translate'
+    'mage/translate',
+    'mage/cookies'
 ], function ($, storage, globalMessageList, $t) {
     'use strict';
 
@@ -20,9 +21,14 @@ define([
    action = function (config, bin, isGlobal, messageContainer) {
         messageContainer = messageContainer || globalMessageList;
 
+        // The controller validates the form key. mage/storage posts a JSON document, so the key
+        // cannot travel as a request parameter and goes in the body instead.
         return storage.post(
             config.getPromotionsByBinActionUrl(),
-            JSON.stringify({value: bin}),
+            JSON.stringify({
+                value: bin,
+                form_key: $.mage.cookies.get('form_key')
+            }),
             isGlobal
         ).done(function (response) {
             if (response.errors) {

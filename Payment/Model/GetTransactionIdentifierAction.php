@@ -7,49 +7,48 @@ declare(strict_types=1);
 
 namespace Line\Payment\Model;
 
-use Magento\Payment\Gateway\Data\OrderAdapterInterface;
-use Magento\Sales\Api\Data\OrderInterface;
+use Line\Payment\Api\Data\Checkout\PaymentAttributeInterface;
+use Magento\Payment\Model\InfoInterface;
 
 /**
+ * Supplies the per-order reference the gateway knows as `IdentificadorCliente`.
  *
+ * It used to be a fast unkeyed digest of storeId, increment id and the buyer's email. All three
+ * inputs are guessable and the digest is cheap, so anyone who knew a customer's email could
+ * reconstruct the reference used to look their transaction up. It is now a random 128 bit value,
+ * rendered as 32 hex characters so the wire format is unchanged.
+ *
+ * The value is generated once and kept on the payment, so a retry of the same order re-uses it.
  */
 class GetTransactionIdentifierAction
 {
-    /** @var string */
-    private const HASH_CHAR_SEPARATOR = '|';
+    /**
+     * Bytes of entropy. 16 bytes render as the same 32 hex characters the md5 digest produced.
+     */
+    private const IDENTIFIER_BYTES = 16;
 
     /**
-     * Generates a unique identifier for a transaction
-     * based on the Buyer's email and the Order data
+     * @param InfoInterface $payment
      *
      * @return string
      */
-    public function generate(OrderInterface|OrderAdapterInterface $order): string
+    public function generate(InfoInterface $payment): string
     {
-        $store = $order->getStoreId();
-        $email = $order->getBillingAddress()->getEmail();
+        $existing = $payment->getAdditionalInformation(
+            PaymentAttributeInterface::PAYMENT_TRANSACTION_IDENTIFIER
+        );
 
-        if ($order instanceof OrderInterface) {
-            $incrementId = $order->getIncrementId();
-        } else {
-            $incrementId = $order->getOrderIncrementId();
+        if (is_string($existing) && $existing !== '') {
+            return $existing;
         }
 
-        // final value to be hashed
-        $value = $store
-            . self::HASH_CHAR_SEPARATOR . $incrementId
-            . self::HASH_CHAR_SEPARATOR . $email;
+        $identifier = bin2hex(random_bytes(self::IDENTIFIER_BYTES));
 
-        return md5($value);
-    }
+        $payment->setAdditionalInformation(
+            PaymentAttributeInterface::PAYMENT_TRANSACTION_IDENTIFIER,
+            $identifier
+        );
 
-    /**
-     * @param string $identifier
-     *
-     * @return array
-     */
-    public function extract(string $identifier): array
-    {
-        return explode(self::HASH_CHAR_SEPARATOR, md5($identifier));
+        return $identifier;
     }
 }

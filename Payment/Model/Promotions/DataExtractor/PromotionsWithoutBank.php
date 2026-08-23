@@ -26,7 +26,8 @@ class PromotionsWithoutBank
     public function extractByCardBrand(string $cardBrand, array $payload): array
     {
         $result = [];
-        $brands = $payload['brands'];
+        // a payload without `brands` is a malformed or error response, not a list of zero brands
+        $brands = $payload['brands'] ?? [];
 
         foreach ($brands as $card) {
             // if brand is the same

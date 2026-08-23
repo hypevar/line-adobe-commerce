@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2025 Line. All rights reserved.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <table name="line_payment_attempt" resource="default" engine="innodb"
+           comment="Line Payment declined authorization counters">
+        <column xsi:type="varchar" name="dimension" nullable="false" length="16"
+                comment="Counter dimension: card, bin, quote, email, customer, store, ip"/>
+        <column xsi:type="varchar" name="dimension_value" nullable="false" length="64"
+                comment="Keyed fingerprint, BIN, hashed email or plain id, depending on the dimension"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" identity="false"
+                default="0" comment="Store the attempt was made in"/>
+        <column xsi:type="int" name="declines" unsigned="true" nullable="false" default="0"
+                comment="Declines counted in the current window"/>
+        <column xsi:type="datetime" name="window_started_at" nullable="false"
+                comment="Start of the fixed counting window"/>
+        <column xsi:type="datetime" name="updated_at" nullable="false"
+                comment="Last decline recorded, used by the prune job"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="dimension"/>
+            <column name="dimension_value"/>
+            <column name="store_id"/>
+        </constraint>
+
+        <index referenceId="LINE_PAYMENT_ATTEMPT_UPDATED_AT" indexType="btree">
+            <column name="updated_at"/>
+        </index>
+    </table>
+</schema>

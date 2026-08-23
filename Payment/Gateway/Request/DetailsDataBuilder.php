@@ -8,34 +8,48 @@ declare(strict_types=1);
 namespace Line\Payment\Gateway\Request;
 
 use Line\Payment\Api\Data\Checkout\PaymentAttributeInterface;
-use Line\Payment\Api\Data\ConfigInterface;
 use Line\Payment\Api\Request\BuilderInterface;
+use Line\Payment\Api\ResolveInstallmentPlanActionInterface;
 use Line\Payment\Gateway\DataReader;
-use Line\Payment\Model\Config;
+use Line\Payment\Model\Checkout\SensitiveDataRegistry;
 use Line\Payment\Model\GetTransactionIdentifierAction;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Payment\Gateway\Data\PaymentDataObjectInterface;
+use Psr\Log\LoggerInterface;
 
 class DetailsDataBuilder implements BuilderInterface
 {
     private DataReader $reader;
     private GetTransactionIdentifierAction $identifier;
+    private SensitiveDataRegistry $registry;
+    private ResolveInstallmentPlanActionInterface $resolver;
+    private LoggerInterface $logger;
 
     /**
      * @param DataReader $reader
-     * @param GetTransactionIdentifierAction $identifier
-     * @param Config $configuration
+     * @param GetTransactionIdentifierAction $action
+     * @param SensitiveDataRegistry $registry
+     * @param ResolveInstallmentPlanActionInterface $resolver
+     * @param LoggerInterface $logger
      */
     public function __construct(
         DataReader $reader,
-        GetTransactionIdentifierAction $action
+        GetTransactionIdentifierAction $action,
+        SensitiveDataRegistry $registry,
+        ResolveInstallmentPlanActionInterface $resolver,
+        LoggerInterface $logger
     ) {
         $this->reader = $reader;
         $this->identifier = $action;
+        $this->registry = $registry;
+        $this->resolver = $resolver;
+        $this->logger = $logger;
     }
 
     /**
-     * @inheritdoc
+     *
+     * @throws LocalizedException
      */
     public function build(array $buildSubject): array
     {
@@ -46,34 +60,51 @@ class DetailsDataBuilder implements BuilderInterface
         /** @var OrderAdapterInterface $order */
         $order = $payment->getOrder();
 
+        $info = $payment->getPayment();
+
         // Customer Identifier for this transaction
-        // (based on Customer and Order information)
-        $identifier = $this->identifier->generate($order);
+        $identifier = $this->identifier->generate($info);
 
         // Reference value
         $incrementId = $order->getOrderIncrementId();
 
-        // Amount of installments
-        $installments = (int) $payment->getPayment()
-            ->getAdditionalInformation(PaymentAttributeInterface::PAYMENT_INSTALLMENTS);
+        $installments = (int) $info->getAdditionalInformation(PaymentAttributeInterface::PAYMENT_INSTALLMENTS);
+        $claimedMerchant = $info->getAdditionalInformation(PaymentAttributeInterface::PAYMENT_MERCHANT_NUMBER);
+        $card = $this->registry->get();
 
-        // Business Number coming from external Promotion information
-        $businessNumber = $payment->getPayment()
-            ->getAdditionalInformation(PaymentAttributeInterface::PAYMENT_MERCHANT_NUMBER);
+        if ($card === null) {
+            $this->logger->critical(
+                'Line Payment: no card data in the request scope while resolving the installment plan.',
+                ['order_increment_id' => $incrementId]
+            );
 
-        // Rate coefficient from selected installment (e.g. 1.15 = 15% surcharge)
-        // Defaults to 1.0 (no surcharge) if not present
-        $rate = (float) ($payment->getPayment()
-            ->getAdditionalInformation(PaymentAttributeInterface::PAYMENT_INSTALLMENT_RATE) ?: 1.0);
+            throw new LocalizedException(
+                __('We can\'t process this payment right now. Please re-enter your card details and try again.')
+            );
+        }
 
-        // Total amount to charge, including installment surcharge
-        $amount = $order->getGrandTotalAmount() * $rate;
+        $plan = $this->resolver->resolve(
+            $card->getBin(),
+            (string) $info->getAdditionalInformation(PaymentAttributeInterface::CREDIT_CARD_TYPE),
+            $installments,
+            is_scalar($claimedMerchant) ? (string) $claimedMerchant : null
+        );
+
+        // Total amount to charge, including the surcharge of the plan the server resolved.
+        $amount = round($order->getGrandTotalAmount() * $plan->getRate(), 2);
+
+        // Persist the authoritative rate so the admin view and any downstream consumer read the
+        // number the gateway was actually charged with, not the one the browser proposed.
+        $info->setAdditionalInformation(
+            PaymentAttributeInterface::PAYMENT_INSTALLMENT_RATE,
+            $plan->getRate()
+        );
 
         // Details data structure
         $details = [
-            self::FIELD_DETAIL_BUSINESS_NUMBER => $businessNumber,
+            self::FIELD_DETAIL_BUSINESS_NUMBER => $plan->getMerchantNumber(),
             self::FIELD_DETAIL_AMOUNT => $amount,
-            self::FIELD_DETAIL_INSTALLMENTS => $installments,
+            self::FIELD_DETAIL_INSTALLMENTS => $plan->getInstallments(),
             self::FIELD_CUSTOMER_IDENTIFIER => $identifier,
             self::FIELD_REFERENCE => $incrementId
         ];

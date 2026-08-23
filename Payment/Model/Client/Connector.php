@@ -164,20 +164,7 @@ class Connector implements ConnectorInterface
             // perform basic checks to ensure we're ready to build the request
             $this->validate();
 
-            // TODO: clean up sensitive fields
-            // NumeroTarjeta, CodigoSeguridad, FechaExpiracion,
-            $debugBody = $body;
-            if (isset($debugBody['FechaExpiracion'])) {
-                $debugBody['FechaExpiracion'] = '***';
-            }
-
-            if (isset($debugBody['CodigoSeguridad'])) {
-                $debugBody['CodigoSeguridad'] = '***';
-            }
-
-            if (isset($debugBody['NumeroTarjeta'])) {
-                $debugBody['NumeroTarjeta'] = '***';
-            }
+            $debugBody = $this->mask($body);
 
             $this->logger->debug('Connector Debug request', [
                 'method' => $method,
@@ -209,7 +196,8 @@ class Connector implements ConnectorInterface
             if ($this->configuration->getApiSslIsActive()) {
                 $request->setOptions([
                     CURLOPT_SSLVERSION => $this->configuration->getApiSslVersion(),
-                    CURLOPT_SSL_VERIFYPEER => false
+                    CURLOPT_SSL_VERIFYPEER => true,
+                    CURLOPT_SSL_VERIFYHOST => 2
                 ]);
             }
 
@@ -227,9 +215,8 @@ class Connector implements ConnectorInterface
             // converts response into an array
             $response = json_decode($response, true);
 
-            // fill in current response object for debug
             /** @var array $response */
-            $debug['response'] = $response;
+            $debug['response'] = is_array($response) ? $this->mask($response) : $response;
 
         } catch (ConfigurationMismatchException $e) {
             // TODO: do something specific related to the module's configuration
@@ -257,6 +244,43 @@ class Connector implements ConnectorInterface
         $this->logger->debug('Connector Debug response', $debug);
 
         return $response;
+    }
+
+    /**
+     * Replaces the cardholder fields of a request or response payload before it is logged.
+     *
+     * Applied recursively: the gateway repeats the card number inside the `Detalle` node.
+     *
+     * @param array $payload
+     *
+     * @return array
+     */
+    protected function mask(array $payload): array
+    {
+        $masked = [
+            'NumeroTarjeta',
+            'CodigoSeguridad',
+            'FechaExpiracion',
+            'NombreTitular',
+            'DocumentoTitular',
+            'EmailTitular',
+            'TrackI',
+            'TrackII',
+            'IPAddress'
+        ];
+
+        foreach ($payload as $key => $value) {
+            if (is_array($value)) {
+                $payload[$key] = $this->mask($value);
+                continue;
+            }
+
+            if (in_array($key, $masked, true) && $value !== null && $value !== '') {
+                $payload[$key] = '***';
+            }
+        }
+
+        return $payload;
     }
 
     /**

@@ -26,6 +26,7 @@
     <preference for="Line\Payment\Api\GetEmittersActionInterface" type="Line\Payment\Model\GetEmittersAction" />
 
     <!-- Promotions -->
+    <preference for="Line\Payment\Api\ResolveInstallmentPlanActionInterface" type="Line\Payment\Model\Promotions\ResolveInstallmentPlanAction" />
     <preference for="Line\Payment\Api\GetPromotionsActionInterface" type="Line\Payment\Model\GetPromotionsAction" />
     <preference for="Line\Payment\Api\GetPromotionsByBinActionInterface" type="Line\Payment\Model\GetPromotionsByBinAction" />
     <!-- <preference for="Line\Payment\Api\PromotionsInterface" type="Line\Payment\Model\Promotions" /> -->
@@ -93,6 +94,47 @@
             <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
         </arguments>
     </type>
+    <type name="Line\Payment\Model\GetPromotionsByBinAction">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\Promotions\ResolveInstallmentPlanAction">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Gateway\Request\PaymentDataBuilder">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Gateway\Request\DetailsDataBuilder">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\Security\AttemptContextBuilder">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\Security\AttemptGuard">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Model\Security\AttemptRecorder">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+    <type name="Line\Payment\Cron\PruneAttempts">
+        <arguments>
+            <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
+        </arguments>
+    </type>
+
 
 
     <!-- ********* -->
@@ -162,6 +204,8 @@
     <virtualType name="LinePaymentCaptureRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
         <arguments>
             <argument name="builders" xsi:type="array">
+                <!-- Must stay first: it throws before any outbound call or promotions lookup happens -->
+                <item name="throttle_guard" xsi:type="string">Line\Payment\Gateway\Request\ThrottleGuardBuilder</item>
                 <item name="customer" xsi:type="string">Line\Payment\Gateway\Request\CustomerInformationBuilder</item>
                 <item name="sales_channel" xsi:type="string">Line\Payment\Gateway\Request\SalesChannelDataBuilder</item>
                 <item name="currency_code" xsi:type="string">Line\Payment\Gateway\Request\CurrencyCodeDataBuilder</item>
@@ -205,6 +249,10 @@
                 <item name="payment" xsi:type="object">Line\Payment\Gateway\Validator\PaymentValidator</item>
             </argument>
         </arguments>
+
+        <plugin name="line_payment_decline_recorder"
+                type="Line\Payment\Model\Security\DeclineRecorderPlugin"
+                sortOrder="10" />
     </type>
 
     <!-- ********* -->

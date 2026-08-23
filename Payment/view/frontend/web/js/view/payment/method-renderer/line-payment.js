@@ -105,7 +105,7 @@ define([
          * Init component
          */
         initialize: function () {
-            var self = this;
+            let self = this;
 
             this._super();
 
@@ -139,8 +139,8 @@ define([
                     model.selectedPlan(null);
                     return;
                 }
-                var plans = self.availableInstallments() || [];
-                var plan  = _.find(plans, function (p) { return p.value == qty; }) || null;
+                let plans = self.availableInstallments() || [];
+                let plan  = _.find(plans, function (p) { return p.value == qty; }) || null;
                 model.selectedPlan(plan);
             });
 
@@ -180,7 +180,7 @@ define([
                 $('body').trigger('processStart');
 
                 // retrieve bin number from field value (first 6 digits)
-                var bin = value.substr(0, 6);
+                let bin = value.substr(0, 6);
 
                 // retrieve promotions
                 getPromotionsByBinAction(config, bin, false)
@@ -265,9 +265,7 @@ define([
          * @return {Object}
          */
         getData: function () {
-            var plan = model.selectedPlan();
-
-            var data = {
+            let data = {
                 'method': this.item.method,
                 'additional_data': {
                     'cardholder_name': this.creditCardHolderName(),
@@ -281,8 +279,10 @@ define([
                     'cc_method': this.creditCardMethod(),
                     'credit_card_method': this.creditCardType(),
                     'installments': this.installments(),
-                    'merchant_number': this.selectedMerchantNumber(),
-                    'installment_rate': plan ? plan.rate : 1.0
+                    'merchant_number': this.selectedMerchantNumber()
+                    // `installment_rate` is intentionally not sent. The rate decides how much is
+                    // charged, so the server looks it up from the promotions service at
+                    // authorization time and ignores anything the browser proposes.
                 }
             };
 
@@ -403,7 +403,7 @@ define([
          * @return {Object}
          */
         getCcAvailableTypesValues: function () {
-            var map = _.map(this.getCcAvailableTypes(), function (value, key) {
+            let map = _.map(this.getCcAvailableTypes(), function (value, key) {
                 return {
                     'value': key,
                     'type': value
@@ -427,7 +427,7 @@ define([
         getCcTypeTitleByCode: function (code) {
             if (!code) return '';
 
-            var title = '',
+            let title = '',
                 keyValue = 'value',
                 keyType = 'type';
 
@@ -456,7 +456,7 @@ define([
          * @returns {Array}
          */
         getInfo: function () {
-            var creditCardType = this.getCcTypeTitleByCode(this.creditCardBrand() + this.creditCardType()),
+            let creditCardType = this.getCcTypeTitleByCode(this.creditCardBrand() + this.creditCardType()),
                 creditCardNumber = this.formatDisplayCcNumber(this.creditCardNumber());
 
             if (!creditCardType || !creditCardNumber) return [];
@@ -471,7 +471,7 @@ define([
          * @returns bool
          */
         validate: function () {
-            var $form = $('#' + this.getCode() + '-form');
+            let $form = $('#' + this.getCode() + '-form');
             return $form.validation() && $form.validation('isValid');
         },
 

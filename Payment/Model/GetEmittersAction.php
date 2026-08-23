@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace Line\Payment\Model;
 
 use Line\Payment\Api\GetEmittersActionInterface;
-use Line\Payment\Model\Adapter;
+use Line\Payment\Model\Promotions\PromotionsCache;
 use Magento\Framework\Exception\LocalizedException;
 use Psr\Log\LoggerInterface;
 
@@ -17,8 +17,11 @@ use Psr\Log\LoggerInterface;
  */
 class GetEmittersAction implements GetEmittersActionInterface
 {
+    private const CACHE_BUCKET = 'emitters';
+
     protected Adapter $client;
     protected LoggerInterface $log;
+    private PromotionsCache $cache;
 
     public const ENDPOINT_URL = '/creditcard/emisores';
 
@@ -27,13 +30,16 @@ class GetEmittersAction implements GetEmittersActionInterface
 
     /**
      * @param Adapter $client
+     * @param PromotionsCache $cache
      * @param LoggerInterface $logger
      */
     public function __construct(
         Adapter $client,
+        PromotionsCache $cache,
         LoggerInterface $logger
     ) {
         $this->client = $client;
+        $this->cache = $cache;
         $this->log = $logger;
     }
 
@@ -41,10 +47,15 @@ class GetEmittersAction implements GetEmittersActionInterface
      * Retrieves emitters from Gateway Service
      *
      * @return array
+     * @throws \Exception
      */
     public function get(): array
     {
-        $emitters = [];
+        $cached = $this->cache->load(self::CACHE_BUCKET, self::CHANNEL_WEB);
+
+        if ($cached !== null) {
+            return $cached;
+        }
 
         try {
             // retrieve emitters for WEB
@@ -57,9 +68,7 @@ class GetEmittersAction implements GetEmittersActionInterface
                 throw new LocalizedException(__('No emitters were received from external service'));
             }
 
-            $this->log->debug('Emisores WEB', $emitters);
-
-            return $this->convert($emitters);
+            $converted = $this->convert($emitters);
 
         } catch (\Exception $e) {
             $this->log->error($e->getMessage());
@@ -67,7 +76,9 @@ class GetEmittersAction implements GetEmittersActionInterface
             throw $e;
         }
 
-        return $emitters;
+        $this->cache->save(self::CACHE_BUCKET, self::CHANNEL_WEB, $converted);
+
+        return $converted;
     }
 
     /**

@@ -8,19 +8,11 @@
 define([], function () {
     'use strict';
 
-    var config = window.checkoutConfig.payment.linepayment;
+    let config = window.checkoutConfig.payment.linepayment;
 
     return {
-        getUrl: function() {
-            return config.env.url;
-        },
-
-        getPublicKey: function() {
-            return config.env.public_key;
-        },
-
         isSandboxEnabled: function () {
-            return config.env.is_sandbox
+            return config.env.is_sandbox;
         },
 
         getCode: function () {

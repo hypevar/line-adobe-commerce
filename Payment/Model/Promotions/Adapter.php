@@ -61,10 +61,11 @@ class Adapter
      * @param string $url
      * @param array $params
      * @param bool $convert
+     * @param array $query query string parameters, appended after the path is interpolated
      *
      * @return array
      */
-    public function get(string $url, array $params = [], bool $convert = false): array
+    public function get(string $url, array $params = [], bool $convert = false, array $query = []): array
     {
         list(
             $marketplace,
@@ -76,6 +77,10 @@ class Adapter
             $marketplace,
             $account
         );
+
+        if ($query !== []) {
+            $url .= '?' . http_build_query($query);
+        }
 
         $response = $this->connector->get($url, $params);
 

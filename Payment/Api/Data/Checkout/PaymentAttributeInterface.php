@@ -50,8 +50,22 @@ interface PaymentAttributeInterface
 
     /**
      * Rate coefficient from selected installment (e.g. 1.15 = 15% surcharge)
+     *
+     * Server-authoritative output only. The checkout observer does not read this field from the
+     * request: it is written by \Line\Payment\Gateway\Request\DetailsDataBuilder with the rate
+     * the server resolved, so that the admin view and downstream consumers see the coefficient the
+     * gateway was actually charged with.
+     *
+     * @deprecated as an input. Anything reading this as a customer-supplied value is a defect.
      */
     public const PAYMENT_INSTALLMENT_RATE = 'installment_rate';
+
+    /**
+     * Random per-order reference sent to the Gateway as `IdentificadorCliente`
+     *
+     * @see \Line\Payment\Model\GetTransactionIdentifierAction
+     */
+    public const PAYMENT_TRANSACTION_IDENTIFIER = 'transaction_identifier';
 
     /**
      * Authorization Code from the Gateway response object

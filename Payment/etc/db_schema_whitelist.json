@@ -1,0 +1,18 @@
+{
+    "line_payment_attempt": {
+        "column": {
+            "dimension": true,
+            "dimension_value": true,
+            "store_id": true,
+            "declines": true,
+            "window_started_at": true,
+            "updated_at": true
+        },
+        "index": {
+            "LINE_PAYMENT_ATTEMPT_UPDATED_AT": true
+        },
+        "constraint": {
+            "PRIMARY": true
+        }
+    }
+}

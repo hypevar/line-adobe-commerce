@@ -116,7 +116,9 @@ class ConfigProvider implements ConfigProviderInterface
                     self::CODE => [
                         'code' => self::CODE,
                         AttributeProviderInterface::IS_ACTIVE => $this->config->isActive(),
-                        AttributeProviderInterface::ENV => $this->getEnvironmentConfiguration(),
+                        AttributeProviderInterface::ENV => [
+                            'is_sandbox' => $this->isSandboxMode()
+                        ],
                         AttributeProviderInterface::AVAILABLE_TYPES => $this->getCcAvailableTypes(),
                         AttributeProviderInterface::MONTHS => $this->getCcMonths(),
                         AttributeProviderInterface::YEARS => $this->getCcYears(),
@@ -207,31 +209,6 @@ class ConfigProvider implements ConfigProviderInterface
     public function isSandboxMode()
     {
         return $this->config->isSandboxModeEnabled();
-    }
-
-    /**
-     *
-     * @throws NoSuchEntityException
-     *
-     * @return string
-     */
-    public function getCredentials(): string
-    {
-        return $this->config->getApiCredentials();
-    }
-
-    /**
-     *
-     * @throws NoSuchEntityException
-     *
-     * @return array
-     */
-    public function getEnvironmentConfiguration(): array
-    {
-        return [
-            'api_key' => $this->getCredentials(),
-            'is_sandbox' => $this->isSandboxMode()
-        ];
     }
 
     /**
