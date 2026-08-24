@@ -166,11 +166,13 @@ class Connector implements ConnectorInterface
 
             $debugBody = $this->mask($body);
 
-            $this->logger->debug('Connector Debug request', [
-                'method' => $method,
-                'http-uri' => $httpUri,
-                'body' => $debugBody
-            ]);
+            if ($this->configuration->isDebugEnabled()) {
+                $this->logger->debug('Connector Debug request', [
+                    'method' => $method,
+                    'http-uri' => $httpUri,
+                    'body' => $debugBody
+                ]);
+            }
 
             $requestUrl = $this->getBaseUrl() . $httpUri;
 
@@ -212,6 +214,8 @@ class Connector implements ConnectorInterface
             /** @var string $response */
             $response = $request->getBody();
 
+            $debug['status'] = $request->getStatus();
+
             // converts response into an array
             $response = json_decode($response, true);
 
@@ -240,8 +244,10 @@ class Connector implements ConnectorInterface
             throw $e;
         }
 
-        // final success request data debug information
-        $this->logger->debug('Connector Debug response', $debug);
+        // The request/response pair is enough to recreate the gateway contract in a mock.
+        if ($this->configuration->isDebugEnabled()) {
+            $this->logger->debug('Connector Debug response', $debug);
+        }
 
         return $response;
     }
