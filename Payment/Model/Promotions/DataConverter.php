@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Line\Payment\Model\Promotions;
 
+use Line\Payment\Model\Promotions\Exception\PromotionsUnavailable;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Psr\Log\LoggerInterface;
 
@@ -27,29 +28,49 @@ class DataConverter
     }
 
     /**
+     * A body without `brands` is not "this BIN has no promotions", it is a body we cannot read —
+     * an error envelope, a gateway page, a changed contract. Returning an empty result for it makes
+     * the caller cache that emptiness and turn a momentary outage into a lasting one.
+     *
      * @param array $payload JSON object coming from Gateway's response
      *
      * @return array
+     * @throws PromotionsUnavailable when the payload does not carry a promotions structure
      */
     public function convert(array $payload): array
     {
-        if (!isset($payload['brands'])) {
-            return [];
+        if (!isset($payload['brands']) || !is_array($payload['brands'])) {
+            throw new PromotionsUnavailable(
+                __('The promotions service answered with an unexpected payload.')
+            );
         }
 
         $promosByBrands = $payload['brands'];
 
         $brand = current($promosByBrands);
 
+        // No brand at all is a legitimate answer: the card simply has no promotions.
+        if (!is_array($brand)) {
+            return [
+                'promotions' => [],
+                'cardBrand' => '',
+                'defaultMerchant' => false
+            ];
+        }
+
         $promotions = [];
-        $cardBrand = $brand['cardBrand'];
+        $cardBrand = $brand['cardBrand'] ?? '';
         $defaultMerchant = $brand['defaultMerchant'] ?? false;
 
-        unset($defaultMerchant['activationKey']);
+        // The activation key is a credential; it never leaves this method, and `defaultMerchant`
+        // is not always an array to unset it from.
+        if (is_array($defaultMerchant)) {
+            unset($defaultMerchant['activationKey']);
+        }
 
         $binData = $installmentsData = $merchantData = [];
 
-        foreach($brand['options'] as $promo) {
+        foreach ($brand['options'] ?? [] as $promo) {
             // ensure Promotion is available
             if (!$this->isAvailable($promo)) {
                 $this->logger->debug('Promotion is not available (enabled, start-end date or weekday)', $promo);

@@ -9,11 +9,13 @@ namespace Line\Payment\Model\Client;
 
 use Line\Payment\Api\Data\ConfigInterface;
 use Line\Payment\Api\Data\ConnectorInterface;
+use Line\Payment\Api\Response\AttributeInterface;
 use Line\Payment\Gateway\Api\ResponseFactory;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Exception\ConfigurationMismatchException;
 use Magento\Framework\HTTP\Client\Curl;
 use Magento\Framework\HTTP\Client\CurlFactory;
+use Magento\Framework\Phrase;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -211,12 +213,26 @@ class Connector implements ConnectorInterface
             // retrieve response
             /** @var string $response */
             $response = $request->getBody();
+            $status = (int) $request->getStatus();
+            $debug['http_status'] = $status;
 
             // converts response into an array
             $response = json_decode($response, true);
 
+            if (!is_array($response)) {
+                $debug['http_error'] = ['error' => 'the response body could not be read as JSON'];
+
+                $this->logger->error('Connector: unreadable response body', $debug);
+
+                return $this->errorResponse();
+            }
+
+            if ($status < 200 || $status >= 300) {
+                $this->logger->error('Connector: the service answered with HTTP ' . $status, $debug);
+            }
+
             /** @var array $response */
-            $debug['response'] = is_array($response) ? $this->mask($response) : $response;
+            $debug['response'] = $this->mask($response);
 
         } catch (ConfigurationMismatchException $e) {
             // TODO: do something specific related to the module's configuration
@@ -225,25 +241,45 @@ class Connector implements ConnectorInterface
                 'code' => $e->getCode()
             ]);
 
-        } catch (Exception $e) {
-            // checking out we didn't die for natural reasons
-            $status = $request->getStatus();
-            $message = $e->getMessage();
+            return $this->errorResponse(__('The payment method is not configured correctly.'));
 
+        } catch (\Exception $e) {
+            // checking out we didn't die for natural reasons
             $debug['http_error'] = [
-                'error' => $message,
+                'error' => $e->getMessage(),
                 'code' => $e->getCode()
             ];
 
+            if (isset($request)) {
+                $debug['http_status'] = $request->getStatus();
+            }
+
             $this->logger->error($e->getMessage(), $debug);
 
-            throw $e;
+            return $this->errorResponse();
         }
 
         // final success request data debug information
         $this->logger->debug('Connector Debug response', $debug);
 
         return $response;
+    }
+
+    /**
+     * A response the gateway validator can reject on its own terms: no `identifier`, and a message
+     * to put in front of the customer.
+     *
+     * @see \Line\Payment\Gateway\Validator\ResponseValidator
+     *
+     * @param Phrase|null $message
+     *
+     * @return array
+     */
+    private function errorResponse(?Phrase $message = null): array
+    {
+        $message = $message ?: __('We could not reach the payment service. Please try again in a few minutes.');
+
+        return [AttributeInterface::FIELD_MESSAGE => (string) $message];
     }
 
     /**

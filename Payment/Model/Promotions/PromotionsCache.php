@@ -74,6 +74,9 @@ class PromotionsCache
     }
 
     /**
+     * An error envelope or an empty payload is never stored: a momentary failure upstream must not
+     * be served back as an answer for the whole lifetime.
+     *
      * @param string $bucket
      * @param string $discriminator
      * @param array $payload
@@ -84,7 +87,7 @@ class PromotionsCache
     {
         $lifetime = $this->getLifetime();
 
-        if ($lifetime <= 0 || isset($payload['error'])) {
+        if ($lifetime <= 0 || $payload === [] || !empty($payload['errors']) || !empty($payload['error'])) {
             return;
         }
 

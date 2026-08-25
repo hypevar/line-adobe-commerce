@@ -9,6 +9,7 @@ namespace Line\Payment\Model\Promotions;
 
 use Line\Payment\Api\Data\ConfigInterface;
 use Line\Payment\Gateway\Api\ResponseFactory;
+use Line\Payment\Model\Promotions\Exception\PromotionsUnavailable;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Exception\ConfigurationMismatchException;
 use Magento\Framework\HTTP\Client\Curl;
@@ -200,9 +201,25 @@ class Connector
             // retrieve response
             /** @var string $response */
             $response = $request->getBody();
+            $status = (int) $request->getStatus();
+            $debug['http_status'] = $status;
+
+            if ($status < 200 || $status >= 300) {
+                $debug['response'] = $response;
+
+                throw new PromotionsUnavailable(
+                    __('The promotions service answered with HTTP %1.', $status)
+                );
+            }
 
             // converts response into an array
             $response = json_decode($response, true);
+
+            if (!is_array($response)) {
+                throw new PromotionsUnavailable(
+                    __('The promotions service answered with a body that cannot be read.')
+                );
+            }
 
             // fill in current response object for debug
             /** @var array $response */
@@ -214,6 +231,11 @@ class Connector
                 'error' => $e->getMessage(),
                 'code' => $e->getCode()
             ]);
+
+            throw new PromotionsUnavailable(
+                __('The promotions service is not configured.'),
+                $e
+            );
 
         } catch (\Exception $e) {
             // checking out we didn't die for natural reasons
