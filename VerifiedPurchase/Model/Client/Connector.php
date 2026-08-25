@@ -9,6 +9,8 @@ namespace Line\VerifiedPurchase\Model\Client;
 
 use Line\Payment\Api\Data\ConfigInterface;
 use Line\VerifiedPurchase\Api\Data\ConnectorInterface;
+use Line\VerifiedPurchase\Api\Data\ConfigInterface as VerifiedPurchaseConfigInterface;
+use Line\VerifiedPurchase\Api\Verification\Gateway\Request\AttributeInterface;
 use Magento\Framework\Api\DataObjectHelper;
 use Magento\Framework\Exception\ConfigurationMismatchException;
 use Magento\Framework\HTTP\Client\Curl;
@@ -55,6 +57,11 @@ class Connector implements ConnectorInterface
     protected ConfigInterface $configuration;
 
     /**
+     * @var VerifiedPurchaseConfigInterface
+     */
+    protected VerifiedPurchaseConfigInterface $verifiedPurchaseConfiguration;
+
+    /**
      * @var LoggerInterface
      */
     protected LoggerInterface $logger;
@@ -68,17 +75,20 @@ class Connector implements ConnectorInterface
      * Class constructor
      *
      * @param ConfigInterface $config
+     * @param VerifiedPurchaseConfigInterface $verifiedPurchaseConfig
      * @param CurlFactory $curl
      * @param DataObjectHelper $objectHelper
      * @param LoggerInterface $logger
      */
     public function __construct(
         ConfigInterface $config,
+        VerifiedPurchaseConfigInterface $verifiedPurchaseConfig,
         CurlFactory $curl,
         DataObjectHelper $objectHelper,
         LoggerInterface $logger
     ) {
         $this->configuration = $config;
+        $this->verifiedPurchaseConfiguration = $verifiedPurchaseConfig;
         $this->curlFactory = $curl;
         $this->objectHelper = $objectHelper;
         $this->logger = $logger;
@@ -204,11 +214,13 @@ class Connector implements ConnectorInterface
             // perform basic checks to ensure we're ready to build the request
             $this->validate();
 
-            $this->logger->debug('Connector Debug request', [
-                'method' => $method,
-                'http-uri' => $httpUri,
-                'body' => $body
-            ]);
+            if ($this->verifiedPurchaseConfiguration->isDebugEnabled()) {
+                $this->logger->debug('Connector Debug request', [
+                    'method' => $method,
+                    'http-uri' => $httpUri,
+                    'body' => $this->mask($body)
+                ]);
+            }
 
             $requestUrl = $this->getBaseUrl() . $httpUri;
 
@@ -251,12 +263,14 @@ class Connector implements ConnectorInterface
             /** @var string $response */
             $response = $request->getBody();
 
+            $debug['status'] = $request->getStatus();
+
             // converts response into an array
             $response = json_decode($response, true);
 
             // fill in current response object for debug
             /** @var array $response */
-            $debug['response'] = $response;
+            $debug['response'] = is_array($response) ? $this->mask($response) : $response;
 
         } catch (ConfigurationMismatchException $e) {
             // TODO: do something specific related to the module's configuration
@@ -280,10 +294,40 @@ class Connector implements ConnectorInterface
             throw $e;
         }
 
-        // final success request data debug information
-        $this->logger->debug('Connector Debug response', $debug);
+        // The request/response pair is enough to recreate the gateway contract in a mock.
+        if ($this->verifiedPurchaseConfiguration->isDebugEnabled()) {
+            $this->logger->debug('Connector Debug response', $debug);
+        }
 
         return $response;
+    }
+
+    /**
+     * Replaces sensitive verification data before a payload reaches the debug log.
+     *
+     * @param array $payload
+     *
+     * @return array
+     */
+    private function mask(array $payload): array
+    {
+        $sensitiveFields = [
+            AttributeInterface::FIELD_CODE,
+            AttributeInterface::FIELD_IP_ADDRESS
+        ];
+
+        foreach ($payload as $key => $value) {
+            if (is_array($value)) {
+                $payload[$key] = $this->mask($value);
+                continue;
+            }
+
+            if (in_array($key, $sensitiveFields, true) && $value !== null && $value !== '') {
+                $payload[$key] = '***';
+            }
+        }
+
+        return $payload;
     }
 
     /**

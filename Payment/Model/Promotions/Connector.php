@@ -202,7 +202,7 @@ class Connector
             /** @var string $response */
             $response = $request->getBody();
             $status = (int) $request->getStatus();
-            $debug['http_status'] = $status;
+            $debug['status'] = $status;
 
             if ($status < 200 || $status >= 300) {
                 $debug['response'] = $response;
