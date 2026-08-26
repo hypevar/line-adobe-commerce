@@ -58,11 +58,17 @@
         <arguments>
             <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
         </arguments>
+        <plugin name="line_payment_sandbox_mock_connector"
+                type="Line\Payment\Model\Sandbox\ConnectorPlugin"
+                sortOrder="10"/>
     </type>
     <type name="Line\Payment\Model\Promotions\Connector">
         <arguments>
             <argument name="logger" xsi:type="object">LinePaymentLogger</argument>
         </arguments>
+        <plugin name="line_payment_sandbox_mock_promotions_connector"
+                type="Line\Payment\Model\Sandbox\PromotionsConnectorPlugin"
+                sortOrder="10"/>
     </type>
     <type name="Line\Payment\Gateway\Response\DebuggerHandler">
         <arguments>

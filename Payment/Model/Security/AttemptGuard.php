@@ -12,6 +12,7 @@ use Line\Payment\Model\ResourceModel\PaymentAttempt;
 use Magento\Framework\App\CacheInterface;
 use Magento\Framework\Exception\SecurityViolationException;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Decides whether an authorization attempt may reach the gateway.
@@ -94,7 +95,8 @@ class AttemptGuard
                 continue;
             }
 
-            $this->logger->critical(
+            $this->logger->log(
+                $isAdvisory ? LogLevel::WARNING : LogLevel::ERROR,
                 $isAdvisory
                     ? 'Line Payment: advisory card testing threshold crossed (not blocking).'
                     : 'Line Payment: authorization attempt blocked by the card testing throttle.',

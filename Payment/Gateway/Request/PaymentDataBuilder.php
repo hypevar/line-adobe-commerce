@@ -76,7 +76,7 @@ class PaymentDataBuilder implements BuilderInterface
         $card = $this->registry->get();
 
         if ($card === null) {
-            $this->logger->critical(
+            $this->logger->error(
                 'Line Payment: no card data in the request scope at authorization time. '
                 . 'The order was placed on a request that did not carry the checkout payment data.',
                 ['order_increment_id' => $payment->getOrder()->getOrderIncrementId()]

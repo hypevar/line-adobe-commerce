@@ -159,6 +159,28 @@ class Config implements ConfigInterface
     /**
      * @inheritDoc
      */
+    public function isMockModeEnabled(): bool
+    {
+        return $this->getConfigValue(
+            self::XPATH_MODULE_MODE,
+            $this->storeConfigResolver->getStoreId()
+        ) === self::MODE_MOCK_VALUE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMockScenario(): string
+    {
+        return trim((string) $this->getConfigValue(
+            self::XPATH_MOCK_SCENARIO,
+            $this->storeConfigResolver->getStoreId()
+        ));
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getSandboxApiKey(): string
     {
         return $this->decryptCredential(

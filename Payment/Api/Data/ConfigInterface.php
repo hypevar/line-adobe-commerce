@@ -27,6 +27,9 @@ interface ConfigInterface
     public const XPATH_MODULE_MODE = 'module_mode';
     public const MODE_SANDBOX_VALUE = 'sandbox';
     public const MODE_PRODUCTION_VALUE = 'production';
+    public const MODE_MOCK_VALUE = 'mock';
+
+    public const XPATH_MOCK_SCENARIO = 'mock_scenario';
 
     public const CREDENTIALS_PUBLIC_KEY = 'public_key';
     public const CREDENTIALS_PRIVATE_KEY = 'private_key';
@@ -131,6 +134,20 @@ interface ConfigInterface
      * @return bool
      */
     public function isSandboxModeEnabled(): bool;
+
+    /**
+     * Whether gateway calls are answered from committed fixtures instead of the network.
+     *
+     * @return bool
+     */
+    public function isMockModeEnabled(): bool;
+
+    /**
+     * Fixture scenario to force, or an empty string to pick one at random per call.
+     *
+     * @return string
+     */
+    public function getMockScenario(): string;
 
     /**
      * Returns Sandbox Api key

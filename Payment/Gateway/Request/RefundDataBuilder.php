@@ -54,8 +54,10 @@ class RefundDataBuilder implements BuilderInterface
         try {
             $amount = $this->reader->readAmount($buildSubject);
         } catch (InvalidArgumentException $e) {
-            $this->logger->critical(__METHOD__);
-            $this->logger->critical($e->getMessage());
+            $this->logger->error(
+                'Line Payment: could not read the refund amount from the build subject.',
+                ['error' => $e->getMessage()]
+            );
         }
 
         return [

@@ -5,24 +5,20 @@
 define([
     'jquery',
     'mage/storage',
-    'Magento_Ui/js/model/messageList',
-    'mage/translate',
     'mage/cookies'
-], function ($, storage, globalMessageList, $t) {
+], function ($, storage) {
     'use strict';
 
-    var ERROR_MESSAGE = $t('Cannot reach backend to retrieve promotions, please contact your administrator.'),
-
     /**
+     * Requests the promotions available for a card BIN. Errors are reported by the caller.
+     * The form key travels in the body because mage/storage posts a JSON document.
+     *
      * @param {Object} config
+     * @param {String} bin
      * @param {*} isGlobal
-     * @param {Object} messageContainer
+     * @return {Deferred}
      */
-   action = function (config, bin, isGlobal, messageContainer) {
-        messageContainer = messageContainer || globalMessageList;
-
-        // The controller validates the form key. mage/storage posts a JSON document, so the key
-        // cannot travel as a request parameter and goes in the body instead.
+    let action = function (config, bin, isGlobal) {
         return storage.post(
             config.getPromotionsByBinActionUrl(),
             JSON.stringify({
@@ -30,18 +26,7 @@ define([
                 form_key: $.mage.cookies.get('form_key')
             }),
             isGlobal
-        ).done(function (response) {
-            if (response.errors) {
-                messageContainer.addErrorMessage(response.message);
-                return response;
-            } else {
-                return response.result;
-            }
-        }).fail(function () {
-            messageContainer.addErrorMessage({
-                'message': ERROR_MESSAGE
-            });
-        })
+        );
     };
 
     return action;

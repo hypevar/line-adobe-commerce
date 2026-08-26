@@ -1,0 +1,759 @@
+{
+    "id": "f9dd3ef3-bbef-455f-ad48-4b79d266c081",
+    "key": "Line",
+    "name": "Tarjetas de crédito y débito",
+    "status": true,
+    "fraudScoring": false,
+    "fraudMinAmount": 0,
+    "account": {
+        "maxTime": 360,
+        "minAmount": 0,
+        "validationMode": "INMEDIATO",
+        "displayName": "Sandbox Merchant"
+    },
+    "brands": [
+        {
+            "id": "55e11128-7c3e-4ec2-a8f0-3eb4a7023a62",
+            "cardBrand": "CABAL",
+            "defaultMerchant": {
+                "id": "d14d90c4-080f-49ad-92e3-00c02ad010dc",
+                "brand": "CABAL",
+                "cardBrand": "CABAL",
+                "acquirer": "Prisma",
+                "channel": "WEB",
+                "number": "99999999",
+                "fantasyName": "Sandbox",
+                "status": "ACTIVE",
+                "activationKey": "SANDBOXACTIVATIONKEY",
+                "processorCode": null
+            },
+            "options": [
+                {
+                    "id": "6fa30ca2-ff33-4f45-b72b-e23843919d66",
+                    "enabled": true,
+                    "bank": null,
+                    "merchant": null,
+                    "startDate": null,
+                    "bankId": null,
+                    "endDate": null,
+                    "daysOfWeek": [
+                        "MONDAY",
+                        "TUESDAY",
+                        "WEDNESDAY",
+                        "THURSDAY",
+                        "FRIDAY",
+                        "SATURDAY",
+                        "SUNDAY"
+                    ],
+                    "installments": [
+                        {
+                            "id": "0a3a68bf-f5db-4c3f-8460-36746774a8b5",
+                            "name": "1 Cuota",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 1,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        },
+                        {
+                            "id": "105aa4d5-ab3b-4c6b-85a9-eee25c90b8e5",
+                            "name": "6 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 16,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        },
+                        {
+                            "id": "a6025522-426d-47e8-a02b-d3f2f2260823",
+                            "name": "3 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 13,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        }
+                    ],
+                    "ccCode": null,
+                    "processorCode": null
+                }
+            ]
+        },
+        {
+            "id": "a690d573-e52b-4e0c-9489-e8e81f88e641",
+            "cardBrand": "VISA",
+            "defaultMerchant": {
+                "id": "899a3525-c1ed-4e54-b85f-7f0043e12cea",
+                "brand": "VISA",
+                "cardBrand": "VISA",
+                "acquirer": "Prisma",
+                "channel": "WEB",
+                "number": "99999999",
+                "fantasyName": "Sandbox",
+                "status": "ACTIVE",
+                "activationKey": "SANDBOXACTIVATIONKEY",
+                "processorCode": null
+            },
+            "options": [
+                {
+                    "id": "59ca993a-40c9-4a48-839c-0d197c2b2c2d",
+                    "enabled": true,
+                    "bank": null,
+                    "merchant": null,
+                    "startDate": null,
+                    "bankId": null,
+                    "endDate": null,
+                    "daysOfWeek": [
+                        "MONDAY",
+                        "TUESDAY",
+                        "WEDNESDAY",
+                        "THURSDAY",
+                        "FRIDAY",
+                        "SATURDAY",
+                        "SUNDAY"
+                    ],
+                    "installments": [
+                        {
+                            "id": "0a3a68bf-f5db-4c3f-8460-36746774a8b5",
+                            "name": "1 Cuota",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 1,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        },
+                        {
+                            "id": "105aa4d5-ab3b-4c6b-85a9-eee25c90b8e5",
+                            "name": "6 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 16,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        },
+                        {
+                            "id": "a6025522-426d-47e8-a02b-d3f2f2260823",
+                            "name": "3 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 13,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        }
+                    ],
+                    "ccCode": null,
+                    "processorCode": null
+                },
+                {
+                    "id": "e52c11a6-0955-49d0-b725-f4000cde115f",
+                    "enabled": true,
+                    "bank": {
+                        "id": "259695ba-5ea6-44dc-becd-c493213f6463",
+                        "name": "Galicia",
+                        "image": "",
+                        "bines": [
+                            {
+                                "id": "03e3a6e0-40a0-4714-95f1-9f3b774da817",
+                                "number": "433830",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "054196eb-5bd1-4123-980a-38c622936706",
+                                "number": "377804",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "0a61c1e0-10e8-4279-89d6-fd83bb07ce32",
+                                "number": "554999",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "11eeb936-d5dc-48c7-806a-4f0ecb19b34b",
+                                "number": "450910",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "1cd60cdb-d522-4acb-af72-ac8edae6896c",
+                                "number": "490699",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "2f329cd2-2c81-4860-a168-81075d676969",
+                                "number": "536087",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "374869ec-d314-4a66-9b95-da88d6f8c621",
+                                "number": "377802",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "378cc9e2-0930-4870-892c-aac6bd0d6857",
+                                "number": "545652",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "427b1157-d7b0-4ca9-b460-b017aec467d9",
+                                "number": "377795",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "45d48d0d-af0d-4ec9-a5c1-c83de205291e",
+                                "number": "549416",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "4e40addd-2ce5-4aba-8639-1c1f3580f3e4",
+                                "number": "469725",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "5043b40c-64e4-40c2-a2cb-bf7c9305f4c3",
+                                "number": "477053",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "56c882a0-1a91-4c44-b848-7e17ca29fc43",
+                                "number": "492137",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "626b7d15-3596-43ee-981f-09068b4ab610",
+                                "number": "377803",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "6706a011-fa46-4ae7-96f2-032cb184e7f8",
+                                "number": "549427",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "67375435-d57c-4f70-90dd-5ef5f8637826",
+                                "number": "459354",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "6d4b3389-ecb2-4246-b7f6-923953f20040",
+                                "number": "465494",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "6e56f0e5-9c49-40de-a2a3-7ba61e399667",
+                                "number": "405847",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "7781703c-ee49-4f9b-b0cf-1809e4a0b7b4",
+                                "number": "525692",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "81a7a272-c0ef-4417-b26a-b7bbf83028bf",
+                                "number": "525489",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "85683bc4-30a5-463a-9d57-b71f442fc0d3",
+                                "number": "524702",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "89ae0683-eff4-436b-bb08-d0bce7f74fd3",
+                                "number": "492043",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "8e8083d8-4032-4f6b-8f11-7257ce76585f",
+                                "number": "377796",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "9046e6dc-1508-46ec-b43c-3dbbb18f01f1",
+                                "number": "425822",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "9e40b295-3c75-4c54-afca-311741ffb19e",
+                                "number": "451761",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a03d2461-ba76-4165-b8c5-65dc3877d3b8",
+                                "number": "459473",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a0a27d16-3202-4fa1-bf89-85ce93b9da0d",
+                                "number": "472039",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a3276ca0-c26d-4eda-8520-cde95a3dedf6",
+                                "number": "377797",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a84ffce6-81cf-4cbf-a4a9-5c53fc0d9364",
+                                "number": "550568",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "accf3019-95cb-472d-9934-428a4d5888ad",
+                                "number": "523937",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "ad00f81a-52d5-4297-b830-431669d08dd9",
+                                "number": "469724",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "b056d61b-5e0a-4eb6-b92d-5e21db9318e6",
+                                "number": "465403",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "b4e2bdb5-f57b-4256-b0a5-e5f140f8f128",
+                                "number": "454642",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "bdd0b512-e74c-4a2a-b1a9-0fc455b707cb",
+                                "number": "371593",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "c4cbe7a0-a296-439b-a550-6a9e73f02fe9",
+                                "number": "425821",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "caca35b3-19ed-4772-95e9-c01e58ad5010",
+                                "number": "454640",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "d0ebff98-f3fc-41f9-826c-9769f075fd7f",
+                                "number": "454641",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "d5444b8c-b378-4810-8494-ca4b24a59534",
+                                "number": "370399",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "dab99342-a39e-4899-b454-31419e4e4d29",
+                                "number": "442548",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "dbc2a900-aff5-4fec-9441-c51830aa3822",
+                                "number": "405846",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "e1d88ddc-b1be-49fc-b020-18480b5f326c",
+                                "number": "553638",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "e418bee9-db36-4100-ad9d-837e64f785be",
+                                "number": "469875",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "f2ce32cf-7a21-42e3-9c5d-da3e6da2b1bd",
+                                "number": "450911",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "fa960974-887c-4abb-b87d-6bfd348548af",
+                                "number": "455349",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "fcff2055-907e-42b7-874b-55545525ebc8",
+                                "number": "451769",
+                                "cardType": "CREDIT"
+                            }
+                        ]
+                    },
+                    "merchant": null,
+                    "startDate": null,
+                    "bankId": "259695ba-5ea6-44dc-becd-c493213f6463",
+                    "endDate": null,
+                    "daysOfWeek": [
+                        "MONDAY",
+                        "TUESDAY",
+                        "WEDNESDAY",
+                        "THURSDAY",
+                        "FRIDAY",
+                        "SATURDAY",
+                        "SUNDAY"
+                    ],
+                    "installments": [
+                        {
+                            "id": "1579c9e6-9728-4f7e-9e82-c0f5a313ca2e",
+                            "name": "6 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 6,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": "6CSI"
+                        },
+                        {
+                            "id": "4c463789-5049-4b1c-b7ab-a2b567c1cb9e",
+                            "name": "3 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 3,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": "3CSI"
+                        }
+                    ],
+                    "ccCode": "3CSI-6CSI",
+                    "processorCode": null
+                }
+            ]
+        },
+        {
+            "id": "dd56a8a5-03fd-493e-87c9-a2a5e4daf6f9",
+            "cardBrand": "MASTER",
+            "defaultMerchant": {
+                "id": "9324d645-c074-4689-8a38-aaafce7c7e42",
+                "brand": "MASTER",
+                "cardBrand": "MASTER",
+                "acquirer": "Prisma",
+                "channel": "WEB",
+                "number": "99999999",
+                "fantasyName": "Sandbox",
+                "status": "ACTIVE",
+                "activationKey": "SANDBOXACTIVATIONKEY",
+                "processorCode": null
+            },
+            "options": [
+                {
+                    "id": "9de904c0-aaf2-4c8b-886a-17e01c276547",
+                    "enabled": true,
+                    "bank": null,
+                    "merchant": null,
+                    "startDate": null,
+                    "bankId": null,
+                    "endDate": null,
+                    "daysOfWeek": [
+                        "MONDAY",
+                        "TUESDAY",
+                        "WEDNESDAY",
+                        "THURSDAY",
+                        "FRIDAY",
+                        "SATURDAY",
+                        "SUNDAY"
+                    ],
+                    "installments": [
+                        {
+                            "id": "0a3a68bf-f5db-4c3f-8460-36746774a8b5",
+                            "name": "1 Cuota",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 1,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        },
+                        {
+                            "id": "105aa4d5-ab3b-4c6b-85a9-eee25c90b8e5",
+                            "name": "6 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 16,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        },
+                        {
+                            "id": "a6025522-426d-47e8-a02b-d3f2f2260823",
+                            "name": "3 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 13,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": null
+                        }
+                    ],
+                    "ccCode": null,
+                    "processorCode": null
+                },
+                {
+                    "id": "ccd789e2-c2cf-42aa-8b22-f6174f9f30da",
+                    "enabled": true,
+                    "bank": {
+                        "id": "259695ba-5ea6-44dc-becd-c493213f6463",
+                        "name": "Galicia",
+                        "image": "",
+                        "bines": [
+                            {
+                                "id": "03e3a6e0-40a0-4714-95f1-9f3b774da817",
+                                "number": "433830",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "054196eb-5bd1-4123-980a-38c622936706",
+                                "number": "377804",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "0a61c1e0-10e8-4279-89d6-fd83bb07ce32",
+                                "number": "554999",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "11eeb936-d5dc-48c7-806a-4f0ecb19b34b",
+                                "number": "450910",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "1cd60cdb-d522-4acb-af72-ac8edae6896c",
+                                "number": "490699",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "2f329cd2-2c81-4860-a168-81075d676969",
+                                "number": "536087",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "374869ec-d314-4a66-9b95-da88d6f8c621",
+                                "number": "377802",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "378cc9e2-0930-4870-892c-aac6bd0d6857",
+                                "number": "545652",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "427b1157-d7b0-4ca9-b460-b017aec467d9",
+                                "number": "377795",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "45d48d0d-af0d-4ec9-a5c1-c83de205291e",
+                                "number": "549416",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "4e40addd-2ce5-4aba-8639-1c1f3580f3e4",
+                                "number": "469725",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "5043b40c-64e4-40c2-a2cb-bf7c9305f4c3",
+                                "number": "477053",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "56c882a0-1a91-4c44-b848-7e17ca29fc43",
+                                "number": "492137",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "626b7d15-3596-43ee-981f-09068b4ab610",
+                                "number": "377803",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "6706a011-fa46-4ae7-96f2-032cb184e7f8",
+                                "number": "549427",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "67375435-d57c-4f70-90dd-5ef5f8637826",
+                                "number": "459354",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "6d4b3389-ecb2-4246-b7f6-923953f20040",
+                                "number": "465494",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "6e56f0e5-9c49-40de-a2a3-7ba61e399667",
+                                "number": "405847",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "7781703c-ee49-4f9b-b0cf-1809e4a0b7b4",
+                                "number": "525692",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "81a7a272-c0ef-4417-b26a-b7bbf83028bf",
+                                "number": "525489",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "85683bc4-30a5-463a-9d57-b71f442fc0d3",
+                                "number": "524702",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "89ae0683-eff4-436b-bb08-d0bce7f74fd3",
+                                "number": "492043",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "8e8083d8-4032-4f6b-8f11-7257ce76585f",
+                                "number": "377796",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "9046e6dc-1508-46ec-b43c-3dbbb18f01f1",
+                                "number": "425822",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "9e40b295-3c75-4c54-afca-311741ffb19e",
+                                "number": "451761",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a03d2461-ba76-4165-b8c5-65dc3877d3b8",
+                                "number": "459473",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a0a27d16-3202-4fa1-bf89-85ce93b9da0d",
+                                "number": "472039",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a3276ca0-c26d-4eda-8520-cde95a3dedf6",
+                                "number": "377797",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "a84ffce6-81cf-4cbf-a4a9-5c53fc0d9364",
+                                "number": "550568",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "accf3019-95cb-472d-9934-428a4d5888ad",
+                                "number": "523937",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "ad00f81a-52d5-4297-b830-431669d08dd9",
+                                "number": "469724",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "b056d61b-5e0a-4eb6-b92d-5e21db9318e6",
+                                "number": "465403",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "b4e2bdb5-f57b-4256-b0a5-e5f140f8f128",
+                                "number": "454642",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "bdd0b512-e74c-4a2a-b1a9-0fc455b707cb",
+                                "number": "371593",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "c4cbe7a0-a296-439b-a550-6a9e73f02fe9",
+                                "number": "425821",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "caca35b3-19ed-4772-95e9-c01e58ad5010",
+                                "number": "454640",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "d0ebff98-f3fc-41f9-826c-9769f075fd7f",
+                                "number": "454641",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "d5444b8c-b378-4810-8494-ca4b24a59534",
+                                "number": "370399",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "dab99342-a39e-4899-b454-31419e4e4d29",
+                                "number": "442548",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "dbc2a900-aff5-4fec-9441-c51830aa3822",
+                                "number": "405846",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "e1d88ddc-b1be-49fc-b020-18480b5f326c",
+                                "number": "553638",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "e418bee9-db36-4100-ad9d-837e64f785be",
+                                "number": "469875",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "f2ce32cf-7a21-42e3-9c5d-da3e6da2b1bd",
+                                "number": "450911",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "fa960974-887c-4abb-b87d-6bfd348548af",
+                                "number": "455349",
+                                "cardType": "CREDIT"
+                            },
+                            {
+                                "id": "fcff2055-907e-42b7-874b-55545525ebc8",
+                                "number": "451769",
+                                "cardType": "CREDIT"
+                            }
+                        ]
+                    },
+                    "merchant": null,
+                    "startDate": null,
+                    "bankId": "259695ba-5ea6-44dc-becd-c493213f6463",
+                    "endDate": null,
+                    "daysOfWeek": [
+                        "MONDAY",
+                        "TUESDAY",
+                        "WEDNESDAY",
+                        "THURSDAY",
+                        "FRIDAY",
+                        "SATURDAY",
+                        "SUNDAY"
+                    ],
+                    "installments": [
+                        {
+                            "id": "1579c9e6-9728-4f7e-9e82-c0f5a313ca2e",
+                            "name": "6 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 6,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": "6CSI"
+                        },
+                        {
+                            "id": "4c463789-5049-4b1c-b7ab-a2b567c1cb9e",
+                            "name": "3 Cuotas Sin Interés",
+                            "displayName": "Sandbox Merchant",
+                            "quantity": 3,
+                            "minAmount": 0,
+                            "rate": 1,
+                            "modoCode": "3CSI"
+                        }
+                    ],
+                    "ccCode": "3CSI-6CSI",
+                    "processorCode": null
+                }
+            ]
+        }
+    ]
+}

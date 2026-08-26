@@ -1,0 +1,33 @@
+{
+    "Identificador": "9900000001",
+    "IdentificadorCliente": "aaaaaaaabbbbccccddddeeeeffff0000",
+    "IdentificadorClienteOriginal": null,
+    "Estado": "AUTORIZADA",
+    "CodigoError": 0,
+    "Mensaje": "AUTORIZADA",
+    "MensajeFormato": "Transacción autorizada",
+    "NumeroTarjeta": "450799xxxxxx0010",
+    "NumeroCuenta": "",
+    "ModoIngreso": "WEB",
+    "VTEResult": "SNXX",
+    "CodigoEstado": "approved",
+    "Detalle": [
+        {
+            "IdentificadorCliente": "aaaaaaaabbbbccccddddeeeeffff0000",
+            "IdentificadorClienteOriginal": "",
+            "Fecha": "2026-08-26T15:59:35",
+            "Terminal": "99206680",
+            "Lote": 3,
+            "Cupon": 4,
+            "PlanCuotas": "0",
+            "Cuotas": 1,
+            "CodigoAutorizacion": "008035",
+            "Estado": "AUTORIZADA",
+            "TipoOperacion": "COMPRA",
+            "CodigoError": 0,
+            "CodigoEstado": "approved"
+        }
+    ],
+    "IdentificadorSoftDescriptor": null,
+    "CompraVerificada": null
+}

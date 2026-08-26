@@ -3,39 +3,24 @@
  */
 
 define([
-    'jquery',
-    'mage/storage',
-    'Magento_Ui/js/model/messageList',
-    'mage/translate'
-], function ($, storage, globalMessageList, $t) {
+    'mage/storage'
+], function (storage) {
     'use strict';
 
-    var ERROR_MESSAGE = $t('Cannot reach backend to retrieve promotions, please contact your administrator.'),
-
     /**
+     * Requests the promotions available for a card brand. Errors are reported by the caller.
+     *
      * @param {Object} config
+     * @param {String} cardBrand
      * @param {*} isGlobal
-     * @param {Object} messageContainer
+     * @return {Deferred}
      */
-   action = function (config, cardBrand, isGlobal, messageContainer) {
-        messageContainer = messageContainer || globalMessageList;
-
+    let action = function (config, cardBrand, isGlobal) {
         return storage.post(
             config.getPromotionsActionUrl(),
             JSON.stringify({value: cardBrand}),
             isGlobal
-        ).done(function (response) {
-            if (response.errors) {
-                messageContainer.addErrorMessage(response.message);
-                return response;
-            } else {
-                return response.result;
-            }
-        }).fail(function () {
-            messageContainer.addErrorMessage({
-                'message': ERROR_MESSAGE
-            });
-        })
+        );
     };
 
     return action;

@@ -1,0 +1,33 @@
+{
+    "Identificador": "9900000001",
+    "IdentificadorCliente": "aaaaaaaabbbbccccddddeeeeffff0000",
+    "IdentificadorClienteOriginal": null,
+    "Estado": "NOAUTORIZADA",
+    "CodigoError": 12,
+    "Mensaje": "TRANSAC. INVALIDA",
+    "MensajeFormato": "Transacción NO autorizada por el Emisor. Mensaje recibido: TRANSAC. INVALIDA",
+    "NumeroTarjeta": "450799xxxxxx0010",
+    "NumeroCuenta": "",
+    "ModoIngreso": "WEB",
+    "VTEResult": "----",
+    "CodigoEstado": "card_rejected",
+    "Detalle": [
+        {
+            "IdentificadorCliente": "aaaaaaaabbbbccccddddeeeeffff0000",
+            "IdentificadorClienteOriginal": "",
+            "Fecha": "2026-08-26T16:03:25",
+            "Terminal": "99206670",
+            "Lote": 2,
+            "Cupon": 2,
+            "PlanCuotas": "0",
+            "Cuotas": 16,
+            "CodigoAutorizacion": "",
+            "Estado": "NOAUTORIZADA",
+            "TipoOperacion": "COMPRA",
+            "CodigoError": 12,
+            "CodigoEstado": "card_rejected"
+        }
+    ],
+    "IdentificadorSoftDescriptor": null,
+    "CompraVerificada": null
+}

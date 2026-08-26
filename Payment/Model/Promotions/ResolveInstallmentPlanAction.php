@@ -187,7 +187,7 @@ class ResolveInstallmentPlanAction implements ResolveInstallmentPlanActionInterf
         $rate = is_numeric($value) ? (float) $value : 0.0;
 
         if (!is_finite($rate) || $rate > self::MAX_RATE) {
-            $this->logger->critical(
+            $this->logger->error(
                 'Line Payment: refusing an out-of-range installment rate from the promotions service.',
                 [
                     'installments' => $installments,
@@ -251,7 +251,7 @@ class ResolveInstallmentPlanAction implements ResolveInstallmentPlanActionInterf
             return;
         }
 
-        $this->logger->critical(
+        $this->logger->error(
             'Line Payment: submitted merchant number does not match the resolved plan.',
             [
                 'bin' => $bin,

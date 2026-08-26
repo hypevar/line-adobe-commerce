@@ -6,27 +6,27 @@ define([
     'ko',
     'underscore',
     'Magento_Checkout/js/view/payment/default',
-    'Magento_Ui/js/model/messageList',
     'Line_Payment/js/model/config',
     'Line_Payment/js/action/get-promotions-by-bin',
     'Line_Payment/js/action/get-promotions',
     'Line_Payment/js/model/promotions',
     'Magento_Payment/js/model/credit-card-validation/credit-card-data',
     'Line_Payment/js/view/payment/card-number-mask',
-    'Magento_Checkout/js/model/totals'
+    'Magento_Checkout/js/model/totals',
+    'Magento_Payment/js/model/credit-card-validation/credit-card-number-validator'
 ], function (
     $,
     ko,
     _,
     Component,
-    messageList,
     config,
     getPromotionsByBinAction,
     getPromotionsAction,
     model,
     creditCardData,
     cardNumberMask,
-    checkoutTotals
+    checkoutTotals,
+    cardNumberValidator
 ) {
     'use strict';
 
@@ -57,7 +57,6 @@ define([
             // promotions matching different continions, corresponds to the exposed values in the Checkout
             availableInstallments: ko.observable(false),
 
-            loadingPromotions: false,
             additionalData: {},
 
             // Make configuration object available for conditional rendering
@@ -65,11 +64,10 @@ define([
 
             // if any data isn't loaded, we'll flag the form
             // to avoid checking out with this method
-            hasLoadingErrors: ko.observable(false)
-        },
+            hasLoadingErrors: ko.observable(false),
 
-        // Used to display exceptions during api interactions
-        messageDispatcher: ko.observable(),
+            promotionsErrorMessage: ko.observable('')
+        },
 
         initObservable: function () {
             this._super()
@@ -144,12 +142,22 @@ define([
                 model.selectedPlan(plan);
             });
 
-            // Set credit card number to credit card data object
             this.creditCardNumber.subscribe(_.debounce(function (value) {
                 value = value.replace(/\s/g, '');
 
-                // If value is empty or less than 15 digits reset
-                if (!value || value.length < 15) {
+                let stopLoader = function () {
+                        $('body').trigger('processStop');
+                    },
+                    showPromotionsError = function (response) {
+                        self.promotionsErrorMessage(
+                            (response && response.message) ||
+                            $.mage.__('Card promotions are not available right now. Please try again in a few minutes.')
+                        );
+                        self.availableInstallments(false);
+                        self.installments(null);
+                    };
+
+                if (!cardNumberValidator(value).isValid) {
                     self.selectedCardType(null);
                     self.selectedCardBrand(null);
                     self.creditCardType(null);
@@ -159,68 +167,52 @@ define([
                     self.availableInstallments(false);
                     self.selectedMerchantNumber(false);
                     self.installments(null);
+                    self.promotionsErrorMessage('');
 
                     return false;
                 }
 
-                // stop subscription if it's already running
-                if (this.loadingPromotions) return;
-
-                // if we already loaded promotions, then clean up
-                if ((!value.length || value.length < 15) && self.availableInstallments().length) {
-                    self.availableInstallments(false);
-                    self.installments(0);
-                }
-
-                // if card didn't reach 15 digits, wait for more input
-                if (value.length < 15) {
-                    return;
-                }
-
                 $('body').trigger('processStart');
 
-                // retrieve bin number from field value (first 6 digits)
                 let bin = value.substr(0, 6);
 
-                // retrieve promotions
                 getPromotionsByBinAction(config, bin, false)
                     .done(function (response) {
+                        if (!response || response.errors || !response.result) {
+                            showPromotionsError(response);
+                            stopLoader();
 
-
-                        // BIN not found (case: error 500) - won't allow anything
-                        if (!response.result.promotions) {
-                            self.publishErrorMessage(
-                                $.mage.__('Credit Card not recognized, please try with another one')
-                            );
-                            $('body').trigger('processStop');
                             return;
                         }
 
-                        // If no Promotions came, then block the Payment form
-                        if (response && response.errors) {
-                            self.publishErrorMessage(
-                                $.mage.__('No Promotions available, review your configuration or contact support')
-                            );
-                            self.hasLoadingErrors(true);
-                            self.isPlaceOrderActionAllowed(false);
-                            $('body').trigger('processStop');
-                            return;
-                        }
+                        self.promotionsErrorMessage('');
 
-                        // we've a matching by the BIN endpoint
-                        if (response.result.promotions.length) {
+                        if (response.result.promotions && response.result.promotions.length) {
                             model.loadPromotions(response.result);
-                            $('body').trigger('processStop');
-                        } else {
-                            // No promotions for this specific brand-bank
-                            // pull promotions for all Card Brands
-                            getPromotionsAction(config, response.result.cardBrand, false)
-                                .done(function (response) {
-                                    // return response.result;
-                                    model.loadPromotions(response.result);
-                                    $('body').trigger('processStop');
-                                });
+                            stopLoader();
+
+                            return;
                         }
+
+                        getPromotionsAction(config, response.result.cardBrand, false)
+                            .done(function (all) {
+                                if (!all || all.errors || !all.result) {
+                                    showPromotionsError(all);
+
+                                    return;
+                                }
+
+                                self.promotionsErrorMessage('');
+                                model.loadPromotions(all.result);
+                            })
+                            .fail(function () {
+                                showPromotionsError(null);
+                            })
+                            .always(stopLoader);
+                    })
+                    .fail(function () {
+                        showPromotionsError(null);
+                        stopLoader();
                     });
             }, 800));
 
@@ -473,15 +465,6 @@ define([
         validate: function () {
             let $form = $('#' + this.getCode() + '-form');
             return $form.validation() && $form.validation('isValid');
-        },
-
-        /**
-         * @param {string} message Message to be added into the list
-         */
-        publishErrorMessage: function (message) {
-            messageList.addErrorMessage({
-                message: message
-            });
         }
     });
 });

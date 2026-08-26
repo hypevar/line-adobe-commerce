@@ -71,6 +71,16 @@
                     </depends>
                 </field>
 
+                <field id="mock_scenario" translate="label comment" type="text" sortOrder="24"
+                    showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Mock Scenario</label>
+                    <depends>
+                        <field id="*/*/active">1</field>
+                        <field id="*/*/module_mode">mock</field>
+                    </depends>
+                    <comment><![CDATA[Name of a fixture file to force, without the .json extension. Shipped fixtures: <b>approved</b> and <b>declined</b> (sale), <b>error-profile-not-found</b> and <b>error-bin-not-eligible</b> (promotions lookup failures), <b>visa-no-options</b> (a BIN with no promotions), <b>default</b> (promotions catalogue and emitters). Leave empty to pick one at random on every call. Fixtures named error-* are kept out of the random pool and only run when named here. An operation with no fixture of that name falls back to random.]]></comment>
+                </field>
+
                 <field id="debug_enabled" translate="label" type="select" sortOrder="30"
                     showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Developer Debug</label>

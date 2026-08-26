@@ -1,0 +1,33 @@
+{
+    "id": "f9dd3ef3-bbef-455f-ad48-4b79d266c081",
+    "key": "Line",
+    "name": "Tarjetas de crédito y débito",
+    "status": true,
+    "fraudScoring": false,
+    "fraudMinAmount": 0,
+    "account": {
+        "maxTime": 360,
+        "minAmount": 0,
+        "validationMode": "INMEDIATO",
+        "displayName": "Sandbox Merchant"
+    },
+    "brands": [
+        {
+            "id": "a690d573-e52b-4e0c-9489-e8e81f88e641",
+            "cardBrand": "VISA",
+            "defaultMerchant": {
+                "id": "899a3525-c1ed-4e54-b85f-7f0043e12cea",
+                "brand": "VISA",
+                "cardBrand": "VISA",
+                "acquirer": "Prisma",
+                "channel": "WEB",
+                "number": "99999999",
+                "fantasyName": "Sandbox",
+                "status": "ACTIVE",
+                "activationKey": "SANDBOXACTIVATIONKEY",
+                "processorCode": null
+            },
+            "options": []
+        }
+    ]
+}

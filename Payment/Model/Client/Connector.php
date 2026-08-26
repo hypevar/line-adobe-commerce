@@ -299,6 +299,8 @@ class Connector implements ConnectorInterface
     {
         $masked = [
             'NumeroTarjeta',
+            'NumeroCuenta',
+            'Token',
             'CodigoSeguridad',
             'FechaExpiracion',
             'NombreTitular',

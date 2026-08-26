@@ -14,6 +14,12 @@
         </div>
     </div>
 
+    <div class="messages" data-bind="visible: promotionsErrorMessage()">
+        <div class="message message-error error">
+            <span data-bind="text: promotionsErrorMessage()"></span>
+        </div>
+    </div>
+
     <!-- ko ifnot: hasErrors() -->
         <div class="field type">
             <div class="control">

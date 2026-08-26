@@ -73,7 +73,7 @@ class DetailsDataBuilder implements BuilderInterface
         $card = $this->registry->get();
 
         if ($card === null) {
-            $this->logger->critical(
+            $this->logger->error(
                 'Line Payment: no card data in the request scope while resolving the installment plan.',
                 ['order_increment_id' => $incrementId]
             );
