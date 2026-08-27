@@ -20,6 +20,13 @@ use Psr\Log\LoggerInterface;
 class GetPromotionsByBinAction implements GetPromotionsByBinActionInterface
 {
     private const CACHE_BUCKET = 'promotions_by_bin';
+    private const STATUS_NOT_FOUND = 404;
+
+    private const NO_PROMOTIONS = [
+        'promotions' => [],
+        'cardBrand' => '',
+        'defaultMerchant' => false
+    ];
 
     protected Adapter $client;
     protected LoggerInterface $log;
@@ -41,6 +48,9 @@ class GetPromotionsByBinAction implements GetPromotionsByBinActionInterface
     }
 
     /**
+     * A 404 is the service saying this BIN has no promotions, which is a legitimate answer and
+     * yields an empty result. Every other failure is an outage and stops the order.
+     *
      * @param string $value BIN value to be sent to the Gateway
      *
      * @return array
@@ -64,18 +74,37 @@ class GetPromotionsByBinAction implements GetPromotionsByBinActionInterface
                 true,
                 [self::PARAM_BIN_NAME => $bin]
             );
-        } catch (\Throwable $e) {
-            $this->log->error('Promotions lookup by BIN failed: ' . $e->getMessage(), ['bin' => $bin]);
+        } catch (PromotionsUnavailable $e) {
+            if ($e->getCode() !== self::STATUS_NOT_FOUND) {
+                throw $this->unavailable($e, $bin);
+            }
 
-            throw new PromotionsUnavailable(
-                __('Card promotions are not available right now. Please try again in a few minutes.'),
-                $e
-            );
+            $promotions = self::NO_PROMOTIONS;
+        } catch (\Throwable $e) {
+            throw $this->unavailable($e, $bin);
         }
 
         $this->cache->save(self::CACHE_BUCKET, $bin, $promotions);
 
         return $promotions;
+    }
+
+    /**
+     * Wraps a lookup failure in the only message the customer is allowed to see.
+     *
+     * @param \Throwable $cause
+     * @param string $bin
+     *
+     * @return PromotionsUnavailable
+     */
+    private function unavailable(\Throwable $cause, string $bin): PromotionsUnavailable
+    {
+        $this->log->error('Promotions lookup by BIN failed: ' . $cause->getMessage(), ['bin' => $bin]);
+
+        return new PromotionsUnavailable(
+            __('Card promotions are not available right now. Please try again in a few minutes.'),
+            $cause instanceof \Exception ? $cause : null
+        );
     }
 
     /**

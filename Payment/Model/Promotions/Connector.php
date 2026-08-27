@@ -208,7 +208,9 @@ class Connector
                 $debug['response'] = $response;
 
                 throw new PromotionsUnavailable(
-                    __('The promotions service answered with HTTP %1.', $status)
+                    __('The promotions service answered with HTTP %1.', $status),
+                    null,
+                    $status
                 );
             }
 

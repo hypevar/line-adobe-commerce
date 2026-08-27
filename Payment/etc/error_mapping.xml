@@ -11,100 +11,68 @@
 <mapping xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/error_mapping.xsd">
     <message_list>
-        <!-- Internal error messaging -->
-        <!-- Usually issues with API keys -->
-        <message code="Authorization has been denied for this request." translate="true">Authorization has been denied for this request.</message>
-        <!-- Missing or malformed fields within Request payload -->
-        <message code="Error en autorizacion" translate="true">Error en autorizacion</message>
+        <!-- Funds or limit: 51, 61, 65 -->
+        <message code="51" translate="true">Su tarjeta fue rechazada por fondos insuficientes o por superar su límite. Por favor, intente con otra tarjeta.</message>
+        <message code="61" translate="true">Su tarjeta fue rechazada por fondos insuficientes o por superar su límite. Por favor, intente con otra tarjeta.</message>
+        <message code="65" translate="true">Su tarjeta fue rechazada por fondos insuficientes o por superar su límite. Por favor, intente con otra tarjeta.</message>
 
-        <message code="999" translate="true">An error has occurred.</message>
-        <message code="000" translate="true">Malformed Gateway response</message>
+        <!-- Card cannot be used: 14, 46, 53, 54, 56 -->
+        <message code="14" translate="true">No se pudo utilizar su tarjeta. Por favor, verifique los datos o intente con otra tarjeta.</message>
+        <message code="46" translate="true">No se pudo utilizar su tarjeta. Por favor, verifique los datos o intente con otra tarjeta.</message>
+        <message code="53" translate="true">No se pudo utilizar su tarjeta. Por favor, verifique los datos o intente con otra tarjeta.</message>
+        <message code="54" translate="true">No se pudo utilizar su tarjeta. Por favor, verifique los datos o intente con otra tarjeta.</message>
+        <message code="56" translate="true">No se pudo utilizar su tarjeta. Por favor, verifique los datos o intente con otra tarjeta.</message>
 
-        <!-- Gateway Error list -->
-        <!-- Operación aprobada, emitir cupón (cargo o ticket). -->
-        <message code="00" translate="true">APROBADA (authno)</message>
-        <!-- Solicitar autorización telefónica, en caso de ser aprobada, cargar el código obtenido y dejar la operación en OFFLINE. -->
-        <message code="01" translate="true">PEDIR AUTORIZACION</message>
-        <!-- Idem punto anterior. -->
-        <message code="02" translate="true">PEDIR AUTORIZACION</message>
-        <!-- Verificar parámetros del sistema, código de comercio mal cargado -->
-        <message code="03" translate="true">COMERCIO INVALIDO</message>
-        <!-- Denegada, capturar la tarjeta. -->
-        <message code="04" translate="true">CAPTURAR TARJETA</message>
-        <!-- Denegada. -->
-        <message code="05" translate="true">DENEGADA</message>
-        <!-- Denegada, llamar al Centro de Autorizaciones. -->
-        <message code="07" translate="true">RETENGA Y LLAME</message>
-        <!-- Operación aprobada, emitir cupón (cargo o ticket). -->
-        <message code="11" translate="true">APROBADA</message>
-        <!-- Verificar el sistema, transacción no reconocida en el sistema. -->
-        <message code="12" translate="true">TRANSAC. INVALIDA</message>
-        <!-- Verificar el sistema, error en el formato del campo importe. -->
-        <message code="13" translate="true">MONTO INVALIDO</message>
-        <!-- Denegada, tarjeta no corresponde. -->
-        <message code="14" translate="true">TARJETA INVALIDA</message>
-        <!-- Denegada, registro no encontrado en el archivo de transacciones. -->
-        <message code="25" translate="true">NO EXISTE ORIGINAL</message>
-        <!-- Momentáneamente el servicio no está disponible. Se debe reintentar en unos segundos. -->
-        <message code="28" translate="true">SERVICIO NO DISPONIBLE</message>
-        <!-- Verificar el sistema, error en el formato del mensaje. -->
-        <message code="30" translate="true">ERROR EN FORMATO</message>
-        <!-- Devuelve al POS información de tipo de cambio y moneda extranjera. -->
-        <message code="31" translate="true">APLICA DCC</message>
-        <!-- Denegada, excede cantidad de reintentos de PIN permitidos. -->
-        <message code="38" translate="true">EXCEDE ING.DE PIN</message>
-        <!-- Denegada, retener tarjeta. -->
-        <message code="43" translate="true">RETENER TARJETA</message>
-        <!-- Denegada, tarjeta inhibida para operar en cuotas. -->
-        <message code="45" translate="true">NO OPERA EN CUOTAS</message>
-        <!-- Denegada, la tarjeta no está vigente aún. -->
-        <message code="46" translate="true">TARJETA NO VIGENTE</message>
-        <!-- Denegada, tarjeta requiere ingreso de PIN. -->
-        <message code="47" translate="true">PIN REQUERIDO</message>
-        <!-- Denegada, excede cantidad máxima de cuotas permitida. -->
-        <message code="48" translate="true">EXCEDE MAX. CUOTAS</message>
-        <!-- Verificar el sistema, error en formato de fecha de expiración (vto) -->
-        <message code="49" translate="true">ERROR FECHA VENCIM.</message>
-        <!-- Denegada, no posee fondos suficientes. -->
-        <message code="51" translate="true">FONDOS INSUFICIENTES</message>
-        <!-- Denegada, no existe cuenta asociada. -->
-        <message code="53" translate="true">CUENTA INEXISTENTE</message>
-        <!-- Denegada, tarjeta expirada. -->
-        <message code="54" translate="true">TARJETA VENCIDA</message>
-        <!-- Denegada, el código de identificación personal es incorrecto. -->
-        <message code="55" translate="true">PIN INCORRECTO</message>
-        <!-- Denegada, emisor no habilitado en el sistema. -->
-        <message code="56" translate="true">TARJ. NO HABILITADA</message>
-        <!-- Verificar el sistema, transacción no permitida a dicha tarjeta. -->
-        <message code="57" translate="true">TRANS. NO PERMITIDA</message>
-        <!-- Verificar el sistema, transacción no permitida a dicha terminal. -->
-        <message code="58" translate="true">SERVICIO INVALIDO</message>
-        <!-- Denegada, excede el límite remanente de la tarjeta. -->
-        <message code="61" translate="true">EXCEDE LIMITE</message>
-        <!-- Denegada, excede el límite remanente de la tarjeta. -->
-        <message code="65" translate="true">EXCEDE LIM. TARJETA</message>
-        <!-- Solicitar autorización telefónica, en caso de ser aprobada, cargar el código obtenido y dejar la operación en OFFLINE. -->
-        <message code="76" translate="true">LLAMAR AL EMISOR</message>
-        <!-- Denegada, cantidad de cuotas inválida para el plan seleccionado. -->
-        <message code="77" translate="true">ERROR PLAN / CUOTAS</message>
-        <!-- Operación aprobada, emitir cupón (cargo o ticket). -->
-        <message code="85" translate="true">APROBADA</message>
-        <!-- Denegada, número de terminal no habilitado por el Emisor. -->
-        <message code="89" translate="true">TERMINAL INVALIDA</message>
-        <!-- Solicitar autorización telefónica, en caso de ser aprobada, cargar el código obtenido y dejar la operación en OFFLINE. -->
-        <message code="91" translate="true">EMISOR FUERA LINEA</message>
-        <!-- Denegada. Error en el mensaje. Envíe nuevamente la transacción incrementando en uno el system trace de la misma. -->
-        <message code="94" translate="true">NRO. SEC. DUPLICAD</message>
-        <!-- Diferencias en la conciliación del cierre, envíe Batch Upload. -->
-        <message code="95" translate="true">RE-TRANSMITIENDO</message>
-        <!-- Mal funcionamiento del sistema. Solicitar autorización telefónica. -->
-        <message code="96" translate="true">ERROR EN SISTEMA</message>
-        <!-- Deben imprimir la información suministrada en el campo ISO 63. -->
-        <message code="98" translate="true">VER RECHAZO EN TICKET</message>
-        <!-- Denegada, cualquier otro código no contemplado en tabla. -->
-        <!-- <message code="xx" translate="true">RECHAZADA (codnum)</message> -->
+        <!-- Instalment plan unavailable: 45, 48, 77 -->
+        <message code="45" translate="true">El plan de cuotas seleccionado no está disponible para esta tarjeta. Por favor, elija otra opción.</message>
+        <message code="48" translate="true">El plan de cuotas seleccionado no está disponible para esta tarjeta. Por favor, elija otra opción.</message>
+        <message code="77" translate="true">El plan de cuotas seleccionado no está disponible para esta tarjeta. Por favor, elija otra opción.</message>
 
+        <!-- Declined by the issuer: 01, 02, 04, 05, 07, 25, 38, 43, 47, 55, 76, 89, 91, 94, 98.
+             Anexo 2 prints the low codes zero padded, but the gateway sends CodigoError as a JSON
+             number, so both forms are mapped. -->
+        <message code="01" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="1" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="02" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="2" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="04" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="4" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="05" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="5" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="07" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="7" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="25" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="38" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="43" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="47" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="55" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="76" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="89" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="91" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="94" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
+        <message code="98" translate="true">Su banco rechazó el pago. Por favor, comuníquese con el emisor de su tarjeta o intente con otra.</message>
 
-        <message code="400" translate="true">Bad Request (HTTP CODE 400)</message>
+        <!-- Temporary service problem, retrying is worthwhile: 28, 95, 96 -->
+        <message code="28" translate="true">El servicio de pagos no está disponible en este momento. Por favor, intente nuevamente en unos minutos.</message>
+        <message code="95" translate="true">El servicio de pagos no está disponible en este momento. Por favor, intente nuevamente en unos minutos.</message>
+        <message code="96" translate="true">El servicio de pagos no está disponible en este momento. Por favor, intente nuevamente en unos minutos.</message>
+
+        <!-- Our side: configuration, malformed requests and transport. The customer is told nothing
+             about the cause; the code and the gateway's own text are in the log. -->
+        <message code="03" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="12" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="13" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="30" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="49" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="57" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="58" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="999" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="000" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="400" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="Authorization has been denied for this request." translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+        <message code="Error en autorizacion" translate="true">No podemos procesar este pago en este momento. Por favor, utilice otro medio de pago o contáctenos.</message>
+
+        <!-- 00, 11, 85 are approvals and must never render as an error;
+             31 (APLICA DCC) is informational; -->
     </message_list>
 </mapping>
