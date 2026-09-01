@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.0
+
+Packaging release. No behavioural change to the payment gateway: everything in this version is
+about what the package contains and where it lives.
+
+- **`Line_VerifiedPurchase` is no longer part of this package.** The verified purchase flow now
+  lives in its own repository and Composer package,
+  [`line/module-verified-purchase`](https://github.com/hypevar/line-verified-purchase-adobe-commerce).
+
 ## 0.5.0
 
 - Installment plans are now resolved server side. The rate and merchant used for the charge are

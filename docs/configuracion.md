@@ -1,13 +1,15 @@
 # Configuración de Line Payments para Magento
 
-Esta guía describe la configuración operativa de los módulos:
+Esta guía describe la configuración operativa de `line/module-payment` (`Line_Payment`),
+el gateway de pago utilizado en el checkout.
 
-- `line/module-payment` (`Line_Payment`): gateway de pago utilizado en el checkout.
-- `line/module-verified-purchase` (`Line_VerifiedPurchase`): verificación antifraude mediante código.
+El módulo complementario `line/module-verified-purchase` (`Line_VerifiedPurchase`) vive en
+[line-verified-purchase-adobe-commerce](https://github.com/hypevar/line-verified-purchase-adobe-commerce)
+y se documenta allí.
 
 ## Acceso a la configuración
 
-Luego de instalar y habilitar los módulos, ir a:
+Luego de instalar y habilitar el módulo, ir a:
 
 `Stores > Configuration > Sales > Payment Methods`
 
@@ -58,35 +60,6 @@ En **Installments Filter Configuration**, definir una regla por cada esquema de 
 - Configurar **API Version** en `version 1`.
 - Mantener **API SSL** habilitado y **API SSL Version** en `TLS 1.2`.
 - **Clean Expired Orders** elimina órdenes expiradas según la configuración `sales/orders/delete_pending_after`.
-
-## Verified Purchase
-
-### Parámetros generales y credenciales
-
-- **Status** habilita o deshabilita el flujo de verificación.
-- **Mode** permite seleccionar `Sandbox` o `Production`.
-- Cargar la **Production API Key** provista por Line Payments.
-- Mantener la URL predeterminada (`https://ccs.4fsoluciones.com.ar/linerestapi/api`) salvo indicación técnica.
-
-### Verificación e intentos
-
-| Campo | Configuración |
-| --- | --- |
-| **Verification Mode** | Mantener `inmediate mode` salvo indicación del equipo técnico. |
-| **Credit Card Summary Description** | Texto que verá el cliente en el resumen de su tarjeta. |
-| **Time Unit** | `Day`, `Hour` o `Minute`. |
-| **Time Amount** | Valor recomendado: `120`. |
-| **Max Tries** | Cantidad máxima de intentos; valor recomendado: `3`. |
-
-### Estados y notificaciones
-
-Configurar de forma coherente los tres estados del proceso:
-
-- **Order Status Process Start**: estado inicial, por ejemplo *En espera de verificación*.
-- **Order Status Process Failed**: estado ante un fallo, por ejemplo *Operación sospechosa*.
-- **Order Status Process Complete**: estado final exitoso, por ejemplo *Pago aprobado*.
-
-Seleccionar también el **Email Sender** que se usará para las notificaciones. Mantener **Developer Debug** deshabilitado salvo durante diagnósticos puntuales; sus logs se escriben en `var/log/line-payment.log`.
 
 ## Recomendaciones operativas
 

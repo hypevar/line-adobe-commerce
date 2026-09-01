@@ -17,7 +17,7 @@ interface ConfigInterface
      * @access public
      */
     public const API_VERSION = 'v1';
-    public const MODULE_VERSION = '0.1.0';
+    public const MODULE_VERSION = '1.0.0';
     public const PAYMENT_METHOD_CODE = 'linepayment';
 
     public const XPATH_BASE = 'payment/linepayment/';
