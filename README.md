@@ -34,6 +34,34 @@ El módulo de este repositorio es una divergencia del último módulo oficial co
 ## Magento Support
 2.4.6-sp3
 
+## Instalación
+
+Antes de instalarlo hay que declarar el repositorio VCS en el `composer.json` raíz del proyecto Magento:
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/hypevar/line-adobe-commerce.git"
+    }
+]
+```
+
+Equivalente por CLI, si se prefiere no editar el archivo a mano:
+
+```bash
+composer config repositories.line-payment vcs https://github.com/hypevar/line-adobe-commerce.git
+```
+
+Con el repositorio declarado:
+
+```bash
+composer require line/module-payment:^1.0
+bin/magento setup:upgrade
+bin/magento setup:di:compile
+bin/magento cache:flush
+```
+
 ## Changelog
 * 0.4.1:
     - integrates second API call so, when no promotions are pulled by BIN, all Promotions from that particular `cardBrand` without an association to a bank are rendered.
@@ -65,11 +93,6 @@ El módulo de este repositorio es una divergencia del último módulo oficial co
 * 0.2.0: add `integration_pool` class so external modules are able to add new fields into the authorization request
 
 * 0.1.0: initial module
-
-## Update through composer
-```
-composer require line/module-payment
-```
 
 ## Sandbox Configuration
 Sandbox Api Key:
