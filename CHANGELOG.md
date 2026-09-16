@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.1
+
+Security release. Upgrade before exposing the checkout to production traffic.
+
+- **The terminal `activationKey` no longer reaches the browser.** The promotions API answers with
+  the key inside every merchant object, and it was being served without authentication through
+  the promotion responses. It is now removed at the adapter boundary, for every consumer and for
+  the cached copy.
+- **After upgrading, flush the Magento cache** (`bin/magento cache:flush`): a cached promotions
+  payload written by an earlier version still carries the key until it is purged. Rotating the
+  affected activation keys is recommended.
+
 ## 1.0.0
 
 Packaging release. No behavioural change to the payment gateway: everything in this version is

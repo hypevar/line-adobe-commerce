@@ -82,7 +82,7 @@ class Adapter
             $url .= '?' . http_build_query($query);
         }
 
-        $response = $this->connector->get($url, $params);
+        $response = $this->withoutActivationKeys($this->connector->get($url, $params));
 
         if ($convert) {
             // build response object
@@ -91,5 +91,25 @@ class Adapter
         }
 
         return $response;
+    }
+
+    /**
+     * Removes every `activationKey` entry from the payload, however deep the merchant object sits.
+     *
+     * @param array $data
+     *
+     * @return array
+     */
+    private function withoutActivationKeys(array $data): array
+    {
+        unset($data['activationKey']);
+
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $data[$key] = $this->withoutActivationKeys($value);
+            }
+        }
+
+        return $data;
     }
 }

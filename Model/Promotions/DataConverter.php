@@ -60,13 +60,7 @@ class DataConverter
 
         $promotions = [];
         $cardBrand = $brand['cardBrand'] ?? '';
-        $defaultMerchant = $brand['defaultMerchant'] ?? false;
-
-        // The activation key is a credential; it never leaves this method, and `defaultMerchant`
-        // is not always an array to unset it from.
-        if (is_array($defaultMerchant)) {
-            unset($defaultMerchant['activationKey']);
-        }
+        $defaultMerchant = $this->withoutActivationKey($brand['defaultMerchant'] ?? false);
 
         $binData = $installmentsData = $merchantData = [];
 
@@ -84,7 +78,7 @@ class DataConverter
                 'cardType' => $bin['cardType']
             ];
 
-            $merchantData = $promo['merchant'];
+            $merchantData = $this->withoutActivationKey($promo['merchant']);
             $installmentsData = [];
 
             foreach ($promo['installments'] as $installment) {
@@ -109,6 +103,24 @@ class DataConverter
             'cardBrand' => $cardBrand,
             'defaultMerchant' => $defaultMerchant
         ];
+    }
+
+    /**
+     * The activation key is a credential; it never leaves this class. A merchant is not always an
+     * array (`null` on brand-wide promotions, `false` when the brand has no default), so it is
+     * returned untouched in that case.
+     *
+     * @param mixed $merchant
+     *
+     * @return mixed
+     */
+    private function withoutActivationKey($merchant)
+    {
+        if (is_array($merchant)) {
+            unset($merchant['activationKey']);
+        }
+
+        return $merchant;
     }
 
     /**

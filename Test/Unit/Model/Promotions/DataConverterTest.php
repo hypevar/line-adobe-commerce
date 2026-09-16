@@ -88,6 +88,16 @@ class DataConverterTest extends TestCase
         );
     }
 
+    public function testStripsTheActivationKeyFromThePromotionMerchantToo(): void
+    {
+        $brand = $this->brand();
+        $brand['options'][0]['merchant']['activationKey'] = 'secret';
+
+        $result = $this->converter->convert(['brands' => [$brand]]);
+
+        $this->assertSame(['number' => '88884444'], $result['promotions'][0]['merchant']);
+    }
+
     public function testDropsTheDebitOptionFromTheInstallments(): void
     {
         $brand = $this->brand();

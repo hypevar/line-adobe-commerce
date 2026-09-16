@@ -4,7 +4,7 @@ Implementación del gateway de pago de Line Payments para Adobe Commerce y Magen
 
 ## Módulo
 
-- `line/module-payment` (`Line_Payment`), versión `1.0.0`: gateway de pago para checkout.
+- `line/module-payment` (`Line_Payment`), versión `1.0.1`: gateway de pago para checkout.
 
 Declara compatibilidad con PHP 8.1, 8.2 y 8.3, y con los componentes Magento 2.4 correspondientes.
 
