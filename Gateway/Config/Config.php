@@ -66,7 +66,7 @@ class Config extends GatewayConfig
         ConfigInterface $moduleConfig,
         $methodCode = null,
         $pathPattern = self::DEFAULT_PATH_PATTERN,
-        Json $serializer = null
+        ?Json $serializer = null
     ) {
         parent::__construct($scopeConfig, $methodCode, $pathPattern);
 
@@ -157,7 +157,7 @@ class Config extends GatewayConfig
     /**
      * @inheritDoc
      */
-    public function isActive(int $storeId = null)
+    public function isActive(?int $storeId = null)
     {
         return (bool) $this->getValue(
             self::XPATH_MODULE_ENABLED,
